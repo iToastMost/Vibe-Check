@@ -21,63 +21,40 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.lifecycleScope
+import androidx.room.Room
+import com.CheekyLittleApps.vibecheck.data.MoodDatabase
+import com.CheekyLittleApps.vibecheck.model.MoodEntry
+import com.CheekyLittleApps.vibecheck.ui.MyApp
 import com.CheekyLittleApps.vibecheck.ui.theme.VibeCheckTheme
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainActivity : ComponentActivity()
 {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContent {
-            VibeCheckTheme {
-                    MyApp()
+
+        val db = Room.databaseBuilder(applicationContext, MoodDatabase::class.java, "mood_entries").build()
+        lifecycleScope.launch(Dispatchers.IO) {
+            val moods = db.moodDao().getAll()
+            // Use withContext to update UI if needed
+            withContext(Dispatchers.Main) {
+                // Update your UI with the fetched data
             }
-
+        val moodDao = db.moodDao()
+        //val moodEntries: List<MoodEntry> = moodDao.getAll()
+        setContent {
+                    MyApp(moods)
         }
     }
 }
-
-@Composable
-fun MyApp() {
-    // MutableState to keep track of the input text
-    var text by remember { mutableStateOf("") }
-    // List to store user input
-    var itemList by remember { mutableStateOf(listOf<String>()) }
-
-    // Column Layout for Text Input and List Display
-    Column(modifier = Modifier.padding(50.dp)) {
-        // Text Field for user input
-        BasicTextField(
-            value = text,
-            onValueChange = { newText -> text = newText },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 8.dp)
-        )
-
-        // Button to submit input and add to the list
-        Button(
-            onClick = {
-                if (text.isNotBlank()) {
-                    // Add input text to the list and clear input field
-                    itemList = itemList + text
-                    text = ""
-                }
-            },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Add")
-        }
-
-        // Display list of items
-        itemList.forEach { item ->
-            Text(text = item, modifier = Modifier.padding(top = 8.dp))
-        }
-    }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    MyApp()
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun DefaultPreview() {
+//    MyApp()
+//}
