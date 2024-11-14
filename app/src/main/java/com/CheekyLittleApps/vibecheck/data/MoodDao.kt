@@ -2,10 +2,12 @@ package com.CheekyLittleApps.vibecheck.data
 
 import androidx.room.Dao
 import androidx.room.Delete
+import androidx.room.Entity
 import androidx.room.Insert
 import androidx.room.Query
 import com.CheekyLittleApps.vibecheck.model.MoodEntry
 
+@Entity
 @Dao
 interface MoodDao
 {

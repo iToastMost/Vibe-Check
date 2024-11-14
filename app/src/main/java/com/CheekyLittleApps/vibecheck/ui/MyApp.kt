@@ -13,11 +13,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.CheekyLittleApps.vibecheck.data.MoodDao
+import com.CheekyLittleApps.vibecheck.data.MoodDatabase
 import com.CheekyLittleApps.vibecheck.model.MoodEntry
 
 @Composable
-fun MyApp(moods: List<MoodEntry>) {
+fun MyApp(db: MoodDatabase) {
 
     // MutableState to keep track of the input text
     var text by remember { mutableStateOf("") }
@@ -42,7 +42,8 @@ fun MyApp(moods: List<MoodEntry>) {
                     // Add input text to the list and clear input field
                     itemList = itemList + text
                     text = ""
-
+//                    MoodEntry entry = new MoodEntry(0, "", "", text)
+//                    db.moodDao().insertAll(moodEntry)
                 }
             },
             modifier = Modifier.fillMaxWidth()
@@ -51,8 +52,8 @@ fun MyApp(moods: List<MoodEntry>) {
         }
 
         // Display list of items
-        moods.forEach { entry ->
-            Text(text = entry.mood, modifier = Modifier.padding(top = 8.dp))
+        itemList.forEach { entry ->
+            Text(text = entry, modifier = Modifier.padding(top = 8.dp))
         }
     }
 }
