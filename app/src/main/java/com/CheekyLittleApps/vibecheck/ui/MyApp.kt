@@ -42,8 +42,6 @@ fun MyApp(db: MoodDatabase) {
                     // Add input text to the list and clear input field
                     itemList = itemList + text
                     text = ""
-//                    MoodEntry entry = new MoodEntry(0, "", "", text)
-//                    db.moodDao().insertAll(moodEntry)
                 }
             },
             modifier = Modifier.fillMaxWidth()
