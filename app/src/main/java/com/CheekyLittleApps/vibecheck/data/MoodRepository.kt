@@ -1,7 +1,17 @@
 package com.CheekyLittleApps.vibecheck.data
 
-class MoodRepository
+import androidx.annotation.WorkerThread
+import com.CheekyLittleApps.vibecheck.model.MoodEntry
+import kotlinx.coroutines.flow.Flow
+
+class MoodRepository(private val moodDao: MoodDao)
 {
-    //where the app will interact with the database
-    //for example when user hits button, it calls db
+    val allMoods: List<MoodEntry> = moodDao.getAll()
+
+    @Suppress("RedundantSuspendModifier")
+    @WorkerThread
+    suspend fun insert(moodEntry: MoodEntry)
+    {
+        moodDao.insertAll(moodEntry)
+    }
 }

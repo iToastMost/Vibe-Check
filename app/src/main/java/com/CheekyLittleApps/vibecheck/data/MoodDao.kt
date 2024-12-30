@@ -12,7 +12,7 @@ import com.CheekyLittleApps.vibecheck.model.MoodEntry
 interface MoodDao
 {
     @Query("SELECT * FROM mood_entries")
-    suspend fun getAll(): List<MoodEntry>
+    fun getAll(): List<MoodEntry>
 
     @Insert
     suspend fun insertAll(vararg moodEntries: MoodEntry)
