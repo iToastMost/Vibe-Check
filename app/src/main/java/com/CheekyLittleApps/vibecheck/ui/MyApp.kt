@@ -15,9 +15,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.CheekyLittleApps.vibecheck.data.MoodDatabase
 import com.CheekyLittleApps.vibecheck.model.MoodEntry
+import com.CheekyLittleApps.vibecheck.viewmodel.MainViewModel
 
 @Composable
-fun MyApp(db: MoodDatabase) {
+fun MyApp(viewModel: MainViewModel) {
 
     // MutableState to keep track of the input text
     var text by remember { mutableStateOf("") }
