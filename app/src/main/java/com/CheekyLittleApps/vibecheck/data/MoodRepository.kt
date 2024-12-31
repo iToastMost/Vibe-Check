@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 class MoodRepository(private val moodDao: MoodDao)
 {
-    val allMoods: List<MoodEntry> = moodDao.getAll()
+    val allMoods: Flow<List<MoodEntry>> = moodDao.getAll()
 
     @Suppress("RedundantSuspendModifier")
     @WorkerThread
