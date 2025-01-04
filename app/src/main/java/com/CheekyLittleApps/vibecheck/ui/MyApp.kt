@@ -20,10 +20,12 @@ import com.CheekyLittleApps.vibecheck.viewmodel.MainViewModel
 @Composable
 fun MyApp(viewModel: MainViewModel) {
 
+    var moodEntries = viewModel.getAllMoodEntries()
     // MutableState to keep track of the input text
     var text by remember { mutableStateOf("") }
     // List to store user input
     var itemList by remember { mutableStateOf(listOf<String>()) }
+
 
     // Column Layout for Text Input and List Display
     Column(modifier = Modifier.padding(50.dp)) {
@@ -42,6 +44,8 @@ fun MyApp(viewModel: MainViewModel) {
                 if (text.isNotBlank()) {
                     // Add input text to the list and clear input field
                     itemList = itemList + text
+                    var moodEntry = MoodEntry(date = "Today", time = "Now", mood = text)
+                    viewModel.addMoodEntry(moodEntry)
                     text = ""
                 }
             },

@@ -4,9 +4,12 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import com.CheekyLittleApps.vibecheck.model.MoodEntry
+import com.CheekyLittleApps.vibecheck.utils.Converters
 
 @Database(entities = [MoodEntry::class], version = 1, exportSchema = true)
+@TypeConverters(Converters::class)
 abstract class MoodDatabase : RoomDatabase()
 {
     abstract fun moodDao(): MoodDao

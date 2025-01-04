@@ -9,6 +9,7 @@ import androidx.room.Room
 import com.CheekyLittleApps.vibecheck.data.MoodDatabase
 import com.CheekyLittleApps.vibecheck.model.MoodEntry
 import com.CheekyLittleApps.vibecheck.ui.MyApp
+import com.CheekyLittleApps.vibecheck.viewmodel.MainViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -23,6 +24,7 @@ class MainActivity : ComponentActivity()
         enableEdgeToEdge()
 
         val db = Room.databaseBuilder(applicationContext, MoodDatabase::class.java, "mood_entries").build()
+        val viewModel = MainViewModel(db.moodDao())
         lifecycleScope.launch(Dispatchers.IO) {
             val moods = db.moodDao().getAll()
             // Use withContext to update UI if needed
@@ -31,7 +33,7 @@ class MainActivity : ComponentActivity()
             withContext(Dispatchers.Main) {
                 // Update your UI with the fetched data
                 setContent {
-                    MyApp(db)
+                    MyApp(viewModel)
                 }
             }
     }
