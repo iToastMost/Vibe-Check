@@ -7,6 +7,7 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -20,7 +21,7 @@ import com.CheekyLittleApps.vibecheck.viewmodel.MainViewModel
 @Composable
 fun MyApp(viewModel: MainViewModel) {
 
-    var moodEntries = viewModel.getAllMoodEntries()
+    val moodEntries = viewModel.getAllMoodEntries().collectAsState(initial = emptyList())
     // MutableState to keep track of the input text
     var text by remember { mutableStateOf("") }
     // List to store user input
@@ -54,9 +55,6 @@ fun MyApp(viewModel: MainViewModel) {
             Text("Add")
         }
 
-        // Display list of items
-        itemList.forEach { entry ->
-            Text(text = entry, modifier = Modifier.padding(top = 8.dp))
-        }
+        moodEntries.value.forEach { entry -> Text(text = entry.date + ": " + entry.time + ": " + entry.mood) }
     }
 }
