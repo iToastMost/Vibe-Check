@@ -21,5 +21,7 @@ interface MoodDao
     @Delete
     suspend fun delete(moodEntry: MoodEntry)
 
+    @Query("DELETE FROM mood_entries")
+    fun nukeTable()
     //add additional such as find by date
 }

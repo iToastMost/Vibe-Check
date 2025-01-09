@@ -2,10 +2,18 @@ package com.CheekyLittleApps.vibecheck.ui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Button
+import androidx.compose.material3.CalendarLocale
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.DateRangePicker
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -17,7 +25,14 @@ import androidx.compose.ui.unit.dp
 import com.CheekyLittleApps.vibecheck.data.MoodDatabase
 import com.CheekyLittleApps.vibecheck.model.MoodEntry
 import com.CheekyLittleApps.vibecheck.viewmodel.MainViewModel
+import com.CheekyLittleApps.vibecheck.utils.Converters
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.util.Calendar
+import java.util.Date
+import kotlin.time.Duration.Companion.days
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyApp(viewModel: MainViewModel) {
 
@@ -27,6 +42,10 @@ fun MyApp(viewModel: MainViewModel) {
     // List to store user input
     var itemList by remember { mutableStateOf(listOf<String>()) }
 
+    val dateRangePickerState = rememberDateRangePickerState()
+    var startDate = dateRangePickerState.selectedStartDateMillis
+    val endDate = dateRangePickerState.selectedEndDateMillis
+    val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm")
 
     // Column Layout for Text Input and List Display
     Column(modifier = Modifier.padding(50.dp)) {
@@ -45,7 +64,9 @@ fun MyApp(viewModel: MainViewModel) {
                 if (text.isNotBlank()) {
                     // Add input text to the list and clear input field
                     itemList = itemList + text
-                    var moodEntry = MoodEntry(date = "Today", time = "Now", mood = text)
+                    val date = Calendar.getInstance().time
+                    val currentDate = formatter.format(date)
+                    var moodEntry = MoodEntry(date = currentDate, time = "", mood = text)
                     viewModel.addMoodEntry(moodEntry)
                     text = ""
                 }
@@ -53,6 +74,40 @@ fun MyApp(viewModel: MainViewModel) {
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Add")
+        }
+
+        Button(
+            onClick = {
+                viewModel.nuke()
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Delete Data")
+        }
+
+        var isClicked by remember { mutableStateOf(false) }
+
+        Button(
+            onClick = {
+                isClicked = true
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Date Picker")
+        }
+
+        if (isClicked)
+        {
+            DateRangePickerModal(onDateRangeSelected = ({ dateRange -> System.currentTimeMillis(); System.currentTimeMillis()}), { isClicked = false }, dateRangePickerState)
+        }
+
+        if(startDate != null && endDate != null)
+        {
+            Text(text = "Start Date: " + formatter.format(startDate + 1.days.inWholeMilliseconds) + " End Date: " + formatter.format(endDate + 1.days.inWholeMilliseconds))
+        }
+        else
+        {
+            Text(text = "Start Date: " + formatter.format(Calendar.getInstance().time) + " End Date: " + formatter.format(Calendar.getInstance().time))
         }
 
         moodEntries.value.forEach { entry -> Text(text = entry.date + ": " + entry.time + ": " + entry.mood) }
