@@ -23,7 +23,7 @@ class MainActivity : ComponentActivity()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        val db = Room.databaseBuilder(applicationContext, MoodDatabase::class.java, "mood_entries").build()
+        val db = Room.databaseBuilder(applicationContext, MoodDatabase::class.java, "mood_entries").fallbackToDestructiveMigration(true).build()
         val viewModel = MainViewModel(db.moodDao())
         lifecycleScope.launch(Dispatchers.IO) {
             val moods = db.moodDao().getAll()

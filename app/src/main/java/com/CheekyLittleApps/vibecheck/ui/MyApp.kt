@@ -66,7 +66,8 @@ fun MyApp(viewModel: MainViewModel) {
                     itemList = itemList + text
                     val date = Calendar.getInstance().time
                     val currentDate = formatter.format(date)
-                    var moodEntry = MoodEntry(date = currentDate, time = "", mood = text)
+                    val currentTime = System.currentTimeMillis()
+                    var moodEntry = MoodEntry(date = currentDate, time = currentTime, mood = text)
                     viewModel.addMoodEntry(moodEntry)
                     text = ""
                 }
@@ -110,6 +111,19 @@ fun MyApp(viewModel: MainViewModel) {
             Text(text = "Start Date: " + formatter.format(Calendar.getInstance().time) + " End Date: " + formatter.format(Calendar.getInstance().time))
         }
 
-        moodEntries.value.forEach { entry -> Text(text = entry.date + ": " + entry.time + ": " + entry.mood) }
+        moodEntries.value.forEach { entry ->
+            if(startDate != null && endDate != null)
+            {
+                if(entry.time >= startDate!! && entry.time <= endDate!!)
+                {
+                    Text(text = entry.date + ": " + entry.mood)
+                }
+            }
+            else
+            {
+                Text(text = entry.date + ": " + entry.mood)
+            }
+        }
     }
+
 }
