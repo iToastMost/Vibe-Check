@@ -11,6 +11,7 @@ import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DateRangePicker
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDateRangePickerState
@@ -28,8 +29,10 @@ import com.CheekyLittleApps.vibecheck.viewmodel.MainViewModel
 import com.CheekyLittleApps.vibecheck.utils.Converters
 import java.text.SimpleDateFormat
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.Calendar
 import java.util.Date
+import java.util.Locale
 import kotlin.time.Duration.Companion.days
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -42,6 +45,8 @@ fun MyApp(viewModel: MainViewModel) {
     // List to store user input
     var itemList by remember { mutableStateOf(listOf<String>()) }
 
+    val calendar = Calendar.getInstance()
+    val currentDay = Date()
     val dateRangePickerState = rememberDateRangePickerState()
     var startDate = dateRangePickerState.selectedStartDateMillis
     val endDate = dateRangePickerState.selectedEndDateMillis
@@ -111,17 +116,34 @@ fun MyApp(viewModel: MainViewModel) {
             Text(text = "Start Date: " + formatter.format(Calendar.getInstance().time) + " End Date: " + formatter.format(Calendar.getInstance().time))
         }
 
+        HorizontalDivider()
+
         moodEntries.value.forEach { entry ->
             if(startDate != null && endDate != null)
             {
-                if(entry.time >= startDate!! && entry.time <= endDate!!)
+                val sD = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(startDate!! + 1.days.inWholeMilliseconds)
+                val eD = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(endDate!! + 2.days.inWholeMilliseconds)
+                val cD = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(entry.time)
+                val date = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).parse(cD)
+                val dateStart = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).parse(sD)
+                val cDate = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).parse(cD)
+                dateStart.setHours(0)
+                dateStart.setMinutes(0)
+                date.setHours(23)
+                date.setMinutes(59)
+                val dateRange = dateStart..date
+
+                Text(text = "Start Date: " + sD + " End Date: " + eD)
+                if(cDate in dateRange || cD == sD || cD == eD)
                 {
-                    Text(text = entry.date + ": " + entry.mood)
+                    Text(text = entry.date + ":\n" + entry.mood)
+                    HorizontalDivider()
                 }
             }
             else
             {
-                Text(text = entry.date + ": " + entry.mood)
+                Text(text = entry.date + ":\n" + entry.mood)
+                HorizontalDivider()
             }
         }
     }
