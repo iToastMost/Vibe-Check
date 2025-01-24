@@ -1,10 +1,16 @@
 package com.CheekyLittleApps.vibecheck.ui
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.CalendarLocale
 import androidx.compose.material3.DatePicker
@@ -12,6 +18,7 @@ import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DateRangePicker
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDateRangePickerState
@@ -62,6 +69,11 @@ fun MyApp(viewModel: MainViewModel) {
                 .fillMaxWidth()
                 .padding(bottom = 8.dp)
         )
+
+        SingleChoiceSegmentedButton()
+
+        //Potentially used as general mood category
+        //AssistChipExample()
 
         // Button to submit input and add to the list
         Button(
@@ -121,20 +133,28 @@ fun MyApp(viewModel: MainViewModel) {
         moodEntries.value.forEach { entry ->
             if(startDate != null && endDate != null)
             {
-                val sD = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(startDate!! + 1.days.inWholeMilliseconds)
-                val eD = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(endDate!! + 2.days.inWholeMilliseconds)
-                val cD = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(entry.time)
-                val date = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).parse(cD)
-                val dateStart = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).parse(sD)
-                val cDate = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).parse(cD)
-                dateStart.setHours(0)
-                dateStart.setMinutes(0)
-                date.setHours(23)
-                date.setMinutes(59)
-                val dateRange = dateStart..date
+                //Start of implementing Calendar over the deprecated Date class
+//                val sD = Calendar.getInstance().setTimeInMillis(startDate!! + 1.days.inWholeMilliseconds)
+//                val eD = Calendar.getInstance().setTimeInMillis(endDate!! + 1.days.inWholeMilliseconds)
+//                val cD = Calendar.getInstance().setTimeInMillis(entry.time)
 
-                Text(text = "Start Date: " + sD + " End Date: " + eD)
-                if(cDate in dateRange || cD == sD || cD == eD)
+
+                val startDate = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(startDate!! + 1.days.inWholeMilliseconds)
+                val endDate = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(endDate!! + 1.days.inWholeMilliseconds)
+                val currentDate = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(entry.time)
+                val endDateParse = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).parse(endDate)
+                val startDateParse = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).parse(startDate)
+                val currentDateParse = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).parse(currentDate)
+                startDateParse.setHours(0)
+                startDateParse.setMinutes(0)
+                endDateParse.setHours(23)
+                endDateParse.setMinutes(59)
+                val dateRange = startDateParse..endDateParse
+
+                //Shows date range selected for debugging
+                //Text(text = "Start Date: " + startDate + " End Date: " + endDate)
+                
+                if(currentDateParse in dateRange || currentDate == startDate || currentDate == endDate)
                 {
                     Text(text = entry.date + ":\n" + entry.mood)
                     HorizontalDivider()
@@ -149,3 +169,20 @@ fun MyApp(viewModel: MainViewModel) {
     }
 
 }
+
+
+// May be used for selecting general mood categories
+//@Composable
+//fun AssistChipExample() {
+//    AssistChip(
+//        onClick = { Log.d("Assist chip", "hello world") },
+//        label = { Text("Assist chip") },
+//        leadingIcon = {
+//            Icon(
+//                Icons.Filled.Settings,
+//                contentDescription = "Localized description",
+//                Modifier.size(AssistChipDefaults.IconSize)
+//            )
+//        }
+//    )
+//}
