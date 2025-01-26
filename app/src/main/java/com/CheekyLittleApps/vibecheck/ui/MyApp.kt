@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.CheekyLittleApps.vibecheck.data.MoodDatabase
 import com.CheekyLittleApps.vibecheck.model.MoodEntry
+import com.CheekyLittleApps.vibecheck.ui.fragments.MoodFragment
 import com.CheekyLittleApps.vibecheck.viewmodel.MainViewModel
 import com.CheekyLittleApps.vibecheck.utils.Converters
 import java.text.SimpleDateFormat
@@ -134,27 +135,24 @@ fun MyApp(viewModel: MainViewModel) {
             if(startDate != null && endDate != null)
             {
                 //Start of implementing Calendar over the deprecated Date class
-//                val sD = Calendar.getInstance().setTimeInMillis(startDate!! + 1.days.inWholeMilliseconds)
-//                val eD = Calendar.getInstance().setTimeInMillis(endDate!! + 1.days.inWholeMilliseconds)
-//                val cD = Calendar.getInstance().setTimeInMillis(entry.time)
+                val startDay = Calendar.getInstance()
+                startDay.setTimeInMillis(startDate!! + 1.days.inWholeMilliseconds)
+                val endDay = Calendar.getInstance()
+                endDay.setTimeInMillis(endDate!! + 1.days.inWholeMilliseconds)
+                val entryDay = Calendar.getInstance()
+                entryDay.setTimeInMillis(entry.time)
 
-
-                val startDate = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(startDate!! + 1.days.inWholeMilliseconds)
-                val endDate = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(endDate!! + 1.days.inWholeMilliseconds)
-                val currentDate = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(entry.time)
-                val endDateParse = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).parse(endDate)
-                val startDateParse = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).parse(startDate)
-                val currentDateParse = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).parse(currentDate)
-                startDateParse.setHours(0)
-                startDateParse.setMinutes(0)
-                endDateParse.setHours(23)
-                endDateParse.setMinutes(59)
-                val dateRange = startDateParse..endDateParse
+                startDay.set(Calendar.HOUR_OF_DAY, 0)
+                startDay.set(Calendar.MINUTE, 0)
+                startDay.set(Calendar.MILLISECOND, 0)
+                endDay.set(Calendar.HOUR_OF_DAY, 23)
+                endDay.set(Calendar.MINUTE, 59)
+                endDay.set(Calendar.SECOND, 59)
 
                 //Shows date range selected for debugging
                 //Text(text = "Start Date: " + startDate + " End Date: " + endDate)
-                
-                if(currentDateParse in dateRange || currentDate == startDate || currentDate == endDate)
+
+                if((entryDay.after(startDay) && entryDay.before(endDay)) || entryDay.equals(startDay) || entryDay.equals(startDay))
                 {
                     Text(text = entry.date + ":\n" + entry.mood)
                     HorizontalDivider()
