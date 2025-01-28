@@ -32,7 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.CheekyLittleApps.vibecheck.data.MoodDatabase
 import com.CheekyLittleApps.vibecheck.model.MoodEntry
-import com.CheekyLittleApps.vibecheck.ui.fragments.MoodFragment
+import com.CheekyLittleApps.vibecheck.ui.Cards.MoodCard
 import com.CheekyLittleApps.vibecheck.viewmodel.MainViewModel
 import com.CheekyLittleApps.vibecheck.utils.Converters
 import java.text.SimpleDateFormat
@@ -129,8 +129,6 @@ fun MyApp(viewModel: MainViewModel) {
             Text(text = "Start Date: " + formatter.format(Calendar.getInstance().time) + " End Date: " + formatter.format(Calendar.getInstance().time))
         }
 
-        HorizontalDivider()
-
         moodEntries.value.forEach { entry ->
             if(startDate != null && endDate != null)
             {
@@ -154,14 +152,11 @@ fun MyApp(viewModel: MainViewModel) {
 
                 if((entryDay.after(startDay) && entryDay.before(endDay)) || entryDay.equals(startDay) || entryDay.equals(startDay))
                 {
-                    Text(text = entry.date + ":\n" + entry.mood)
-                    HorizontalDivider()
+                    MoodCard("PLACEHOLDER_MOOD_CATEGORY", entry.mood, entry.date)
                 }
-            }
-            else
+            } else
             {
-                Text(text = entry.date + ":\n" + entry.mood)
-                HorizontalDivider()
+                MoodCard("PLACEHOLDER_MOOD_CATEGORY", entry.mood, entry.date)
             }
         }
     }
