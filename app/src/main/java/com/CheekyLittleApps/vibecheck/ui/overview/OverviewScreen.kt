@@ -64,7 +64,6 @@ fun OverviewScreen(
     val endDate = dateRangePickerState.selectedEndDateMillis
     val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm")
 
-
     Scaffold(
         topBar = {
             TopAppBar(
@@ -170,7 +169,6 @@ fun OverviewScreen(
         }
     }
 }
-
 
 // May be used for selecting general mood categories
 //@Composable

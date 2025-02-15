@@ -28,8 +28,6 @@ fun MoodEntryScreen(
     var text by remember { mutableStateOf("") }
     val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm")
 
-
-    
     Column(modifier = Modifier.padding(32.dp)){
 
         SingleChoiceSegmentedButton()
