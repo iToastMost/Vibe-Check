@@ -5,7 +5,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.BottomAppBar
@@ -52,7 +54,6 @@ fun OverviewScreen(
 
     val moodEntries = viewModel.getAllMoodEntries().collectAsState(initial = emptyList())
     // MutableState to keep track of the input text
-    var text by remember { mutableStateOf("") }
     // List to store user input
     var itemList by remember { mutableStateOf(listOf<String>()) }
 
@@ -96,39 +97,6 @@ fun OverviewScreen(
     ) { innerPadding ->
         // Column Layout for Text Input and List Display
         Column(modifier = Modifier.padding(innerPadding)) {
-            // Text Field for user input
-            BasicTextField(
-                value = text,
-                onValueChange = { newText -> text = newText },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 8.dp)
-            )
-
-            SingleChoiceSegmentedButton()
-
-            //Potentially used as general mood category
-            //AssistChipExample()
-
-            // Button to submit input and add to the list
-            Button(
-                onClick = {
-                    if (text.isNotBlank()) {
-                        // Add input text to the list and clear input field
-                        itemList = itemList + text
-                        val date = Calendar.getInstance().time
-                        val currentDate = formatter.format(date)
-                        val currentTime = System.currentTimeMillis()
-                        var moodEntry = MoodEntry(date = currentDate, time = currentTime, mood = text)
-                        viewModel.addMoodEntry(moodEntry)
-                        text = ""
-                    }
-                },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Add")
-            }
-
             Button(
                 onClick = {
                     viewModel.nuke()
@@ -163,41 +131,44 @@ fun OverviewScreen(
                 Text(text = "Start Date: " + formatter.format(Calendar.getInstance().time) + " End Date: " + formatter.format(Calendar.getInstance().time))
             }
 
-            moodEntries.value.forEach { entry ->
-                if(startDate != null && endDate != null)
-                {
-                    //Start of implementing Calendar over the deprecated Date class
-                    val startDay = Calendar.getInstance()
-                    startDay.setTimeInMillis(startDate!! + 1.days.inWholeMilliseconds)
-                    val endDay = Calendar.getInstance()
-                    endDay.setTimeInMillis(endDate!! + 1.days.inWholeMilliseconds)
-                    val entryDay = Calendar.getInstance()
-                    entryDay.setTimeInMillis(entry.time)
+            Column(
+                modifier = Modifier
+                    .verticalScroll(rememberScrollState())
+                    .weight(weight = 1f, fill = false)
+            ){
+                moodEntries.value.forEach { entry ->
+                    if(startDate != null && endDate != null)
+                    {
+                        //Start of implementing Calendar over the deprecated Date class
+                        val startDay = Calendar.getInstance()
+                        startDay.setTimeInMillis(startDate!! + 1.days.inWholeMilliseconds)
+                        val endDay = Calendar.getInstance()
+                        endDay.setTimeInMillis(endDate!! + 1.days.inWholeMilliseconds)
+                        val entryDay = Calendar.getInstance()
+                        entryDay.setTimeInMillis(entry.time)
 
-                    startDay.set(Calendar.HOUR_OF_DAY, 0)
-                    startDay.set(Calendar.MINUTE, 0)
-                    startDay.set(Calendar.MILLISECOND, 0)
-                    endDay.set(Calendar.HOUR_OF_DAY, 23)
-                    endDay.set(Calendar.MINUTE, 59)
-                    endDay.set(Calendar.SECOND, 59)
+                        startDay.set(Calendar.HOUR_OF_DAY, 0)
+                        startDay.set(Calendar.MINUTE, 0)
+                        startDay.set(Calendar.MILLISECOND, 0)
+                        endDay.set(Calendar.HOUR_OF_DAY, 23)
+                        endDay.set(Calendar.MINUTE, 59)
+                        endDay.set(Calendar.SECOND, 59)
 
-                    //Shows date range selected for debugging
-                    //Text(text = "Start Date: " + startDate + " End Date: " + endDate)
+                        //Shows date range selected for debugging
+                        //Text(text = "Start Date: " + startDate + " End Date: " + endDate)
 
-                    if((entryDay.after(startDay) && entryDay.before(endDay)) || entryDay.equals(startDay) || entryDay.equals(startDay))
+                        if((entryDay.after(startDay) && entryDay.before(endDay)) || entryDay.equals(startDay) || entryDay.equals(startDay))
+                        {
+                            MoodCard("PLACEHOLDER_MOOD_CATEGORY", entry.mood, entry.date)
+                        }
+                    } else
                     {
                         MoodCard("PLACEHOLDER_MOOD_CATEGORY", entry.mood, entry.date)
                     }
-                } else
-                {
-                    MoodCard("PLACEHOLDER_MOOD_CATEGORY", entry.mood, entry.date)
                 }
             }
         }
     }
-
-
-
 }
 
 

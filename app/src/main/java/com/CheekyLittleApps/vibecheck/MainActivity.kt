@@ -67,7 +67,8 @@ fun VibeApp(viewModel: MainViewModel)
         }
 
         composable(route = Mood.route) {
-            MoodEntryScreen()
+            MoodEntryScreen(viewModel,
+                onClickEntryAdded = {navController.navigateSingleTopTo(Overview.route)})
         }
     }
 }
