@@ -8,7 +8,7 @@ import androidx.room.TypeConverters
 import com.CheekyLittleApps.vibecheck.model.MoodEntry
 import com.CheekyLittleApps.vibecheck.utils.Converters
 
-@Database(entities = [MoodEntry::class], version = 2, exportSchema = true)
+@Database(entities = [MoodEntry::class], version = 3, exportSchema = true)
 @TypeConverters(Converters::class)
 abstract class MoodDatabase : RoomDatabase()
 {

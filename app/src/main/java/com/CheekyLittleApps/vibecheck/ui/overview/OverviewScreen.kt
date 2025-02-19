@@ -158,11 +158,11 @@ fun OverviewScreen(
 
                         if((entryDay.after(startDay) && entryDay.before(endDay)) || entryDay.equals(startDay) || entryDay.equals(startDay))
                         {
-                            MoodCard("PLACEHOLDER_MOOD_CATEGORY", entry.mood, entry.date)
+                            MoodCard(entry.currentMood, entry.mood, entry.date)
                         }
                     } else
                     {
-                        MoodCard("PLACEHOLDER_MOOD_CATEGORY", entry.mood, entry.date)
+                        MoodCard(entry.currentMood, entry.mood, entry.date)
                     }
                 }
             }
@@ -170,18 +170,3 @@ fun OverviewScreen(
     }
 }
 
-// May be used for selecting general mood categories
-//@Composable
-//fun AssistChipExample() {
-//    AssistChip(
-//        onClick = { Log.d("Assist chip", "hello world") },
-//        label = { Text("Assist chip") },
-//        leadingIcon = {
-//            Icon(
-//                Icons.Filled.Settings,
-//                contentDescription = "Localized description",
-//                Modifier.size(AssistChipDefaults.IconSize)
-//            )
-//        }
-//    )
-//}
