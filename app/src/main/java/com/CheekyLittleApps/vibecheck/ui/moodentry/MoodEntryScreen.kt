@@ -4,8 +4,13 @@ import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.BasicTextField
@@ -42,13 +47,14 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import kotlin.math.exp
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun MoodEntryScreen(
     viewModel: MainViewModel,
     onClickEntryAdded: () -> Unit = {},
 ){
     var text by remember { mutableStateOf("") }
-    var expanded by remember { mutableStateOf(false) }
+    //var expanded by remember { mutableStateOf(false) }
     var moodPicked by remember { mutableStateOf("") }
 
     val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm")
@@ -56,8 +62,8 @@ fun MoodEntryScreen(
 
     Column(modifier = Modifier.padding(32.dp)){
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
+        FlowRow(
+            modifier = Modifier.padding(8.dp),
             horizontalArrangement = Arrangement.Start
         ) {
             moods.forEach { option ->
@@ -128,6 +134,7 @@ fun MoodEntryScreen(
             onValueChange = { newText -> text = newText },
             modifier = Modifier
                 .fillMaxWidth()
+                .weight(1f)
                 .padding(bottom = 8.dp)
         )
 
@@ -145,7 +152,7 @@ fun MoodEntryScreen(
                     onClickEntryAdded()
                 }
             },
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
         ) {
             Text("Add")
         }

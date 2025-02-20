@@ -72,7 +72,11 @@ fun OverviewScreen(
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
                 title = {
-                    Text("Top app bar")
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center,
+                        text = "Vibe Check",
+                    )
                 }
             )
         },
