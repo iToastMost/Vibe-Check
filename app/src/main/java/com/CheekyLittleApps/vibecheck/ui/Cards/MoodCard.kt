@@ -17,12 +17,14 @@ import androidx.compose.ui.unit.dp
 fun MoodCard(
     mood: String,
     moodText: String,
-    date: String
+    date: String,
+    onClickViewMood: () -> Unit = {},
 ) {
     ElevatedCard(
         elevation = CardDefaults.cardElevation(
             defaultElevation = 12.dp
         ),
+        onClick = onClickViewMood,
         modifier = Modifier.size(width = 280.dp, height = 100.dp).padding(4.dp)
     ) {
         Text(text = date, modifier = Modifier.padding(4.dp), textAlign = TextAlign.Center)

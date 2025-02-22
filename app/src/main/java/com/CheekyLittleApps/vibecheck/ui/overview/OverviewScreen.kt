@@ -50,6 +50,7 @@ import kotlin.time.Duration.Companion.days
 fun OverviewScreen(
     viewModel: MainViewModel,
     onClickAddEntry: () -> Unit = {},
+    onClickViewMood: () -> Unit = {},
 ) {
 
     val moodEntries = viewModel.getAllMoodEntries().collectAsState(initial = emptyList())
@@ -162,11 +163,11 @@ fun OverviewScreen(
 
                         if((entryDay.after(startDay) && entryDay.before(endDay)) || entryDay.equals(startDay) || entryDay.equals(startDay))
                         {
-                            MoodCard(entry.currentMood, entry.mood, entry.date)
+                            MoodCard(entry.currentMood, entry.mood, entry.date, onClickViewMood)
                         }
                     } else
                     {
-                        MoodCard(entry.currentMood, entry.mood, entry.date)
+                        MoodCard(entry.currentMood, entry.mood, entry.date, onClickViewMood)
                     }
                 }
             }

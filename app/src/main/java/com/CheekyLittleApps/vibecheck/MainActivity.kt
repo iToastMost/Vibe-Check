@@ -18,6 +18,7 @@ import com.CheekyLittleApps.vibecheck.data.MoodDatabase
 import com.CheekyLittleApps.vibecheck.model.MoodEntry
 import com.CheekyLittleApps.vibecheck.ui.moodentry.MoodEntryScreen
 import com.CheekyLittleApps.vibecheck.ui.overview.OverviewScreen
+import com.CheekyLittleApps.vibecheck.ui.viewmood.ViewMoodScreen
 import com.CheekyLittleApps.vibecheck.viewmodel.MainViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -62,13 +63,21 @@ fun VibeApp(viewModel: MainViewModel)
     ) {
         composable(route = Overview.route){
             OverviewScreen(viewModel,
-                onClickAddEntry = {navController.navigateSingleTopTo(Mood.route)}
+                onClickAddEntry = {navController.navigateSingleTopTo(Mood.route)},
+                onClickViewMood = {navController.navigateSingleTopTo(ViewMood.route)}
             )
         }
 
         composable(route = Mood.route) {
             MoodEntryScreen(viewModel,
                 onClickEntryAdded = {navController.navigateSingleTopTo(Overview.route)})
+        }
+
+        composable(route = ViewMood.route) {
+                ViewMoodScreen("",
+                    "",
+                    onClickViewMood = {navController.navigateSingleTopTo(ViewMood.route)}
+                )
         }
     }
 }

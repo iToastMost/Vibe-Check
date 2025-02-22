@@ -12,3 +12,7 @@ object Overview : VibeDestination {
 object Mood : VibeDestination {
     override val route = "vibe_destination"
 }
+
+object ViewMood : VibeDestination {
+    override val route = "view_mood"
+}

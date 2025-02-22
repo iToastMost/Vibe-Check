@@ -55,7 +55,8 @@ fun MoodEntryScreen(
 ){
     var text by remember { mutableStateOf("") }
     //var expanded by remember { mutableStateOf(false) }
-    var moodPicked by remember { mutableStateOf("") }
+    var moodsPicked by remember { mutableStateOf("") }
+    val moodList = mutableListOf<String>()
 
     val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm")
     val moods = enumValues<MoodColor>()
@@ -73,7 +74,8 @@ fun MoodEntryScreen(
                     onClick = {
                         selected = !selected
                         if(selected)
-                            moodPicked = option.toString()
+                            moodsPicked = option.toString()
+                            moodList.add(option.toString())
                               },
                     label = { Text(option.toString()) },
                     selected = selected,
@@ -146,7 +148,7 @@ fun MoodEntryScreen(
                     val date = Calendar.getInstance().time
                     val currentDate = formatter.format(date)
                     val currentTime = System.currentTimeMillis()
-                    var moodEntry = MoodEntry(date = currentDate, time = currentTime, mood = text, currentMood = moodPicked)
+                    var moodEntry = MoodEntry(date = currentDate, time = currentTime, mood = text, currentMood = moodsPicked)
                     viewModel.addMoodEntry(moodEntry)
                     text = ""
                     onClickEntryAdded()
