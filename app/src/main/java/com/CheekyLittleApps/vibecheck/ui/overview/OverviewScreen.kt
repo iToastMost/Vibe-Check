@@ -1,19 +1,15 @@
 package com.CheekyLittleApps.vibecheck.ui.overview
 
-import android.icu.text.Transliterator.Position
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -23,22 +19,15 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.LayoutDirection
-import androidx.compose.ui.unit.dp
-import com.CheekyLittleApps.vibecheck.model.MoodEntry
 import com.CheekyLittleApps.vibecheck.ui.Cards.MoodCard
 import com.CheekyLittleApps.vibecheck.ui.DateRangePickerModal
-import com.CheekyLittleApps.vibecheck.ui.SingleChoiceSegmentedButton
 import com.CheekyLittleApps.vibecheck.viewmodel.MainViewModel
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -50,7 +39,8 @@ import kotlin.time.Duration.Companion.days
 fun OverviewScreen(
     viewModel: MainViewModel,
     onClickAddEntry: () -> Unit = {},
-    onClickViewMood: () -> Unit = {},
+    //onClickViewMood: (String) -> Unit = {},
+    onClickViewMood: () -> Unit = {}
 ) {
 
     val moodEntries = viewModel.getAllMoodEntries().collectAsState(initial = emptyList())
@@ -163,11 +153,13 @@ fun OverviewScreen(
 
                         if((entryDay.after(startDay) && entryDay.before(endDay)) || entryDay.equals(startDay) || entryDay.equals(startDay))
                         {
-                            MoodCard(entry.currentMood, entry.mood, entry.date, onClickViewMood)
+                            MoodCard(entry.currentMood, entry.mood, entry.date,
+                                entry.uid.toString(), onClickViewMood)
                         }
                     } else
                     {
-                        MoodCard(entry.currentMood, entry.mood, entry.date, onClickViewMood)
+                        MoodCard(entry.currentMood, entry.mood, entry.date,
+                            entry.uid.toString(), onClickViewMood)
                     }
                 }
             }

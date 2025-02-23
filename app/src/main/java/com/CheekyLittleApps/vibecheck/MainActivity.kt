@@ -61,21 +61,30 @@ fun VibeApp(viewModel: MainViewModel)
         navController = navController,
         startDestination = Overview.route
     ) {
+        //TODO Fix onClickViewMood here to navigate with roomId
         composable(route = Overview.route){
             OverviewScreen(viewModel,
                 onClickAddEntry = {navController.navigateSingleTopTo(Mood.route)},
+                //onClickViewMood = { roomId -> navController.navigateToMood(roomId)}
                 onClickViewMood = {navController.navigateSingleTopTo(ViewMood.route)}
             )
         }
 
         composable(route = Mood.route) {
             MoodEntryScreen(viewModel,
-                onClickEntryAdded = {navController.navigateSingleTopTo(Overview.route)})
+                onClickEntryAdded = {navController.navigateSingleTopTo(Overview.route)}
+            )
         }
 
-        composable(route = ViewMood.route) {
-                ViewMoodScreen("",
-                    "",
+        //TODO Link up ViewMoodScreen navArgs here
+        composable(
+            route = ViewMood.route,
+           // arguments = ViewMood.arguments,
+        ) {// navBackStackEntry ->
+            //val roomId =
+              //  navBackStackEntry.arguments?.getString(ViewMood.roomIdArg)
+                ViewMoodScreen(viewModel,
+                    //onClickViewMood = { roomId -> navController.navigateToMood(roomId)}
                     onClickViewMood = {navController.navigateSingleTopTo(ViewMood.route)}
                 )
         }
@@ -90,4 +99,8 @@ fun NavHostController.navigateSingleTopTo(route: String) = this.navigate(route) 
     }
     launchSingleTop = true
     restoreState = true
+}
+
+private fun NavHostController.navigateToMood(roomId: String){
+    this.navigateSingleTopTo("${ViewMood.route}/$roomId")
 }
