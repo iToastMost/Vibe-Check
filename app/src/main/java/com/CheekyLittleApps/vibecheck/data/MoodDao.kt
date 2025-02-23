@@ -15,6 +15,9 @@ interface MoodDao
     @Query("SELECT * FROM mood_entries")
     fun getAll(): Flow<List<MoodEntry>>
 
+    @Query("SELECT * FROM mood_entries WHERE uid = :id")
+    fun getMood(id: Int): Flow<MoodEntry>
+
     @Insert
     suspend fun insertAll(vararg moodEntries: MoodEntry)
 

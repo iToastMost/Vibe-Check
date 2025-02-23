@@ -17,21 +17,21 @@ fun MoodCard(
     mood: String,
     moodText: String,
     date: String,
-    uId: String,
+    uId: Int,
     //onClickViewMood: (String) -> Unit = {},
-    onClickViewMood: () -> Unit = {}
+    onClickViewMood: (Int) -> Unit = {}
 ) {
     ElevatedCard(
         elevation = CardDefaults.cardElevation(
             defaultElevation = 12.dp
         ),
-        onClick = onClickViewMood,
+        onClick = { onClickViewMood(uId) },
         //onClick = onClickViewMood,
         modifier = Modifier.size(width = 280.dp, height = 100.dp).padding(4.dp)
     ) {
         Text(text = date, modifier = Modifier.padding(4.dp), textAlign = TextAlign.Center)
         Text(text = mood, modifier = Modifier.padding(4.dp), textAlign = TextAlign.Center)
-        Text(text = uId,  modifier = Modifier.padding(4.dp), textAlign = TextAlign.Center)
+        Text(text = uId.toString(),  modifier = Modifier.padding(4.dp), textAlign = TextAlign.Center)
         Box(Modifier.fillMaxSize()) { Text(text = moodText, modifier = Modifier.padding(4.dp), textAlign = TextAlign.Center) }
     }
 }

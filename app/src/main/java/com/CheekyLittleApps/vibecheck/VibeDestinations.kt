@@ -18,9 +18,9 @@ object Mood : VibeDestination {
 
 object ViewMood : VibeDestination {
     override val route = "view_mood"
-    val roomIdArg = "room_id"
-    val routeWithArgs = "$route/{$roomIdArg}"
+    //val roomIdArg = 0
+    val routeWithArgs = "${route}/{roomId}"
     val arguments = listOf(
-        navArgument(roomIdArg) { type = NavType.StringType }
+        navArgument("roomId") { type = NavType.IntType }
     )
 }

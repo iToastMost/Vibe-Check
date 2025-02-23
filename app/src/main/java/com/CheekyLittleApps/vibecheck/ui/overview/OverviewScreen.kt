@@ -40,7 +40,7 @@ fun OverviewScreen(
     viewModel: MainViewModel,
     onClickAddEntry: () -> Unit = {},
     //onClickViewMood: (String) -> Unit = {},
-    onClickViewMood: () -> Unit = {}
+    onClickViewMood: (Int) -> Unit = {}
 ) {
 
     val moodEntries = viewModel.getAllMoodEntries().collectAsState(initial = emptyList())
@@ -154,12 +154,12 @@ fun OverviewScreen(
                         if((entryDay.after(startDay) && entryDay.before(endDay)) || entryDay.equals(startDay) || entryDay.equals(startDay))
                         {
                             MoodCard(entry.currentMood, entry.mood, entry.date,
-                                entry.uid.toString(), onClickViewMood)
+                                entry.uid, { onClickViewMood(entry.uid) })
                         }
                     } else
                     {
                         MoodCard(entry.currentMood, entry.mood, entry.date,
-                            entry.uid.toString(), onClickViewMood)
+                            entry.uid, { onClickViewMood(entry.uid) })
                     }
                 }
             }
