@@ -3,6 +3,7 @@ package com.CheekyLittleApps.vibecheck.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.CheekyLittleApps.vibecheck.data.MoodDao
 import com.CheekyLittleApps.vibecheck.data.MoodRepository
 import com.CheekyLittleApps.vibecheck.model.MoodEntry
@@ -24,6 +25,12 @@ class MainViewModel(private val dao: MoodDao) : ViewModel()
 
     fun getMoodEntryById(roomId: Int): Flow<MoodEntry?> {
         return dao.getMood(roomId)
+    }
+
+    fun updateMoodEntry(moodEntry: MoodEntry){
+        viewModelScope.launch(Dispatchers.IO) {
+            dao.updateMood(moodEntry)
+        }
     }
 
     fun nuke()

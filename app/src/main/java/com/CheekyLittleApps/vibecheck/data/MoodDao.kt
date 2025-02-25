@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Entity
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
 import com.CheekyLittleApps.vibecheck.model.MoodEntry
 import kotlinx.coroutines.flow.Flow
 
@@ -20,6 +21,10 @@ interface MoodDao
 
     @Insert
     suspend fun insertAll(vararg moodEntries: MoodEntry)
+
+    @Update
+    fun updateMood(vararg moodEntries: MoodEntry)
+
 
     @Delete
     suspend fun delete(moodEntry: MoodEntry)

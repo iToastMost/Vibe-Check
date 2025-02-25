@@ -86,9 +86,8 @@ fun VibeApp(viewModel: MainViewModel)
 
             val mood = roomId
             val moodText = roomId
-                ViewMoodScreen(viewModel, roomId
-                    //onClickViewMood = { roomId -> navController.navigateToMood(roomId)}
-                    //onClickViewMood = {navController.navigateSingleTopTo(ViewMood.route)}
+                ViewMoodScreen(viewModel, roomId,
+                    onClickEntryAdded = { navController.navigateSingleTopTo(Overview.route)}
                 )
         }
     }

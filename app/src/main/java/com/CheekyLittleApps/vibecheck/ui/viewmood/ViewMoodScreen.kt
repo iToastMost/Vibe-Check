@@ -16,6 +16,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,26 +34,29 @@ import java.util.Calendar
 @Composable
 fun ViewMoodScreen(
     viewModel: MainViewModel,
-    roomId: Int
-    //onClickViewMood: (String) -> Unit = {}
-    //onClickViewMood: () -> Unit = {}
+    roomId: Int,
+    onClickEntryAdded: () -> Unit = {}
 ) {
     val mood by viewModel.getMoodEntryById(roomId).collectAsState(initial = null)
     var moodGeneral: String
-    var text by remember { mutableStateOf("") }
     //var expanded by remember { mutableStateOf(false) }
     var moodsPicked by remember { mutableStateOf("") }
     val moodList = mutableListOf<String>()
+    var text by remember { mutableStateOf("") }
 
     val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm")
     val moods = enumValues<MoodColor>()
 
     Column(modifier = Modifier.padding(32.dp)) {
-        mood?.let {
-            text = it.mood
-            moodGeneral = it.currentMood
+
+        LaunchedEffect(key1 = mood) {
+            mood?.let {
+                text = it.mood
+                moodGeneral = it.currentMood
+            }
         }
-    }
+        }
+
 
 
 
@@ -105,13 +109,13 @@ fun ViewMoodScreen(
             onClick = {
                 if (text.isNotBlank()) {
                     // Add input text to the list and clear input field
-                    val date = Calendar.getInstance().time
-                    val currentDate = formatter.format(date)
-                    val currentTime = System.currentTimeMillis()
-                    var moodEntry = MoodEntry(date = currentDate, time = currentTime, mood = text, currentMood = moodsPicked)
-                    viewModel.addMoodEntry(moodEntry)
+                    mood?.let {
+                        it.mood = text
+                        it.currentMood = moodsPicked
+                        viewModel.updateMoodEntry(it)
+                    }
                     text = ""
-                    //onClickEntryAdded()
+                    onClickEntryAdded()
                 }
             },
             modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
