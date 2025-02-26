@@ -1,9 +1,11 @@
 package com.CheekyLittleApps.vibecheck
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.lifecycleScope
@@ -49,6 +51,7 @@ class MainActivity : ComponentActivity()
     }
 }}
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun VibeApp(viewModel: MainViewModel)
 {
@@ -57,40 +60,48 @@ fun VibeApp(viewModel: MainViewModel)
     val currentDestination = currentBackStack?.destination
     val currentScreen = Overview.route
 
-    NavHost(
-        navController = navController,
-        startDestination = Overview.route
-    ) {
-        //TODO Fix onClickViewMood here to navigate with roomId
-        composable(route = Overview.route){
-            OverviewScreen(viewModel,
-                onClickAddEntry = {navController.navigateSingleTopTo(Mood.route)},
-                onClickViewMood = { roomId -> navController.navigateToMood(roomId)}
-                //onClickViewMood = {navController.navigateSingleTopTo(ViewMood.route)}
-            )
-        }
+    Scaffold(
+        topBar = {
 
-        composable(route = Mood.route) {
-            MoodEntryScreen(viewModel,
-                onClickEntryAdded = {navController.navigateSingleTopTo(Overview.route)}
-            )
-        }
+        },
+    ){ innerPadding ->
+        NavHost(
+            navController = navController,
+            startDestination = Overview.route
+        ) {
+            //TODO Fix onClickViewMood here to navigate with roomId
+            composable(route = Overview.route){
+                OverviewScreen(viewModel,
+                    onClickAddEntry = {navController.navigateSingleTopTo(Mood.route)},
+                    onClickViewMood = { roomId -> navController.navigateToMood(roomId)}
+                    //onClickViewMood = {navController.navigateSingleTopTo(ViewMood.route)}
+                )
+            }
 
-        //TODO Link up ViewMoodScreen navArgs here
-        composable(
-            route = ViewMood.routeWithArgs,
-            arguments = ViewMood.arguments,
-        ) { navBackStackEntry ->
-            val roomId =
-                navBackStackEntry.arguments?.getInt("roomId") ?: 0
+            composable(route = Mood.route) {
+                MoodEntryScreen(viewModel,
+                    onClickEntryAdded = {navController.navigateSingleTopTo(Overview.route)}
+                )
+            }
 
-            val mood = roomId
-            val moodText = roomId
+            //TODO Link up ViewMoodScreen navArgs here
+            composable(
+                route = ViewMood.routeWithArgs,
+                arguments = ViewMood.arguments,
+            ) { navBackStackEntry ->
+                val roomId =
+                    navBackStackEntry.arguments?.getInt("roomId") ?: 0
+
+                val mood = roomId
+                val moodText = roomId
                 ViewMoodScreen(viewModel, roomId,
                     onClickEntryAdded = { navController.navigateSingleTopTo(Overview.route)}
                 )
+            }
         }
     }
+
+
 }
 
 fun NavHostController.navigateSingleTopTo(route: String) = this.navigate(route) {

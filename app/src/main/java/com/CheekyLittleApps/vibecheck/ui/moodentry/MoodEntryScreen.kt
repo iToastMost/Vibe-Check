@@ -1,5 +1,6 @@
 package com.CheekyLittleApps.vibecheck.ui.moodentry
 
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Done
@@ -25,12 +27,17 @@ import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -47,7 +54,8 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import kotlin.math.exp
 
-@OptIn(ExperimentalLayoutApi::class)
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun MoodEntryScreen(
     viewModel: MainViewModel,
@@ -61,40 +69,77 @@ fun MoodEntryScreen(
     val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm")
     val moods = enumValues<MoodColor>()
 
-    Column(modifier = Modifier.padding(32.dp)){
 
-        FlowRow(
-            modifier = Modifier.padding(8.dp),
-            horizontalArrangement = Arrangement.Start
-        ) {
-            moods.forEach { option ->
-                var selected by remember { mutableStateOf(false) }
-                //May be used for selecting general mood categories
-                FilterChip(
-                    onClick = {
-                        selected = !selected
-                        if(selected)
-                            moodsPicked = option.toString()
-                            moodList.add(option.toString())
-                              },
-                    label = { Text(option.toString()) },
-                    selected = selected,
-                    leadingIcon = if (selected) {
-                        {
-                            Icon(
-                                Icons.Filled.Done,
-                                contentDescription = "Localized description",
-                                Modifier.size(FilterChipDefaults.IconSize)
-                            )
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.primary,
+                ),
+                title = {
+
+                },
+                navigationIcon = {
+                    IconButton(onClick = {
+                        onClickEntryAdded()
+                    }) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Cancel Button")
+                    }
+                },
+                actions = {
+                    IconButton(onClick = {
+                        if (text.isNotBlank()) {
+                            // Add input text to the list and clear input field
+                            val date = Calendar.getInstance().time
+                            val currentDate = formatter.format(date)
+                            val currentTime = System.currentTimeMillis()
+                            var moodEntry = MoodEntry(date = currentDate, time = currentTime, mood = text, currentMood = moodsPicked)
+                            viewModel.addMoodEntry(moodEntry)
+                            text = ""
+                            onClickEntryAdded()
                         }
-                    } else {
-                        null
-                    },
-                )
-            }
-        }
+                    }) {
+                        Icon(Icons.Filled.Check, contentDescription = "Confirm Button")
+                    }
+                }
+            )
+        },
+    ) {
+        Column(modifier = Modifier.padding(32.dp)) {
 
-        //potential way to select mood with dropdown menus
+            FlowRow(
+                modifier = Modifier.padding(8.dp),
+                horizontalArrangement = Arrangement.Start
+            ) {
+                moods.forEach { option ->
+                    var selected by remember { mutableStateOf(false) }
+                    //May be used for selecting general mood categories
+                    FilterChip(
+                        onClick = {
+                            selected = !selected
+                            if (selected)
+                                moodsPicked = option.toString()
+                            moodList.add(option.toString())
+                        },
+                        label = { Text(option.toString()) },
+                        selected = selected,
+                        leadingIcon = if (selected) {
+                            {
+                                Icon(
+                                    Icons.Filled.Done,
+                                    contentDescription = "Localized description",
+                                    Modifier.size(FilterChipDefaults.IconSize)
+                                )
+                            }
+                        } else {
+                            null
+                        },
+                    )
+                }
+            }
+
+            //potential way to select mood with dropdown menus
 //        Row(
 //            verticalAlignment = Alignment.CenterVertically,
 //            horizontalArrangement = Arrangement.Start
@@ -127,36 +172,16 @@ fun MoodEntryScreen(
 //
 //            }
 //        }
-
-
-        // Text Field for user input
-        TextField(
-            value = text,
-            label = {Text("How are you feeling?")},
-            onValueChange = { newText -> text = newText },
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-                .padding(bottom = 8.dp)
-        )
-
-        // Button to submit input and add to the list
-        Button(
-            onClick = {
-                if (text.isNotBlank()) {
-                    // Add input text to the list and clear input field
-                    val date = Calendar.getInstance().time
-                    val currentDate = formatter.format(date)
-                    val currentTime = System.currentTimeMillis()
-                    var moodEntry = MoodEntry(date = currentDate, time = currentTime, mood = text, currentMood = moodsPicked)
-                    viewModel.addMoodEntry(moodEntry)
-                    text = ""
-                    onClickEntryAdded()
-                }
-            },
-            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
-        ) {
-            Text("Add")
+            // Text Field for user input
+            TextField(
+                value = text,
+                label = { Text("How are you feeling?") },
+                onValueChange = { newText -> text = newText },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .padding(bottom = 8.dp)
+            )
         }
     }
 }

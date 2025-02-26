@@ -1,5 +1,6 @@
 package com.CheekyLittleApps.vibecheck.ui.viewmood
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -8,13 +9,24 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.Button
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -30,7 +42,8 @@ import com.CheekyLittleApps.vibecheck.viewmodel.MainViewModel
 import java.text.SimpleDateFormat
 import java.util.Calendar
 
-@OptIn(ExperimentalLayoutApi::class)
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun ViewMoodScreen(
     viewModel: MainViewModel,
@@ -47,80 +60,98 @@ fun ViewMoodScreen(
     val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm")
     val moods = enumValues<MoodColor>()
 
-    Column(modifier = Modifier.padding(32.dp)) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.primary,
+                ),
+                title = {
 
-        LaunchedEffect(key1 = mood) {
-            mood?.let {
-                text = it.mood
-                moodGeneral = it.currentMood
-            }
-        }
-        }
-
-
-
-
-    Column(modifier = Modifier.padding(32.dp)){
-
-        FlowRow(
-            modifier = Modifier.padding(8.dp),
-            horizontalArrangement = Arrangement.Start
-        ) {
-            moods.forEach { option ->
-                var selected by remember { mutableStateOf(false) }
-                //May be used for selecting general mood categories
-                FilterChip(
-                    onClick = {
-                        selected = !selected
-                        if(selected)
-                            moodsPicked = option.toString()
-                        moodList.add(option.toString())
-                    },
-                    label = { Text(option.toString()) },
-                    selected = selected,
-                    leadingIcon = if (selected) {
-                        {
-                            Icon(
-                                Icons.Filled.Done,
-                                contentDescription = "Localized description",
-                                Modifier.size(FilterChipDefaults.IconSize)
-                            )
-                        }
-                    } else {
-                        null
-                    },
-                )
-            }
-        }
-
-        // Text Field for user input
-        TextField(
-            value = text,
-            label = {Text("How are you feeling?")},
-            onValueChange = { newText -> text = newText },
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-                .padding(bottom = 8.dp)
-        )
-
-        // Button to submit input and add to the list
-        Button(
-            onClick = {
-                if (text.isNotBlank()) {
-                    // Add input text to the list and clear input field
-                    mood?.let {
-                        it.mood = text
-                        it.currentMood = moodsPicked
-                        viewModel.updateMoodEntry(it)
+                },
+                navigationIcon = {
+                    IconButton(onClick = {
+                        onClickEntryAdded()
+                    }) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Cancel Button")
                     }
-                    text = ""
-                    onClickEntryAdded()
+                },
+                actions = {
+
+
+                    IconButton(onClick = {
+                        if (text.isNotBlank()) {
+                            // Add input text to the list and clear input field
+                            mood?.let {
+                                it.mood = text
+                                it.currentMood = moodsPicked
+                                viewModel.updateMoodEntry(it)
+                            }
+                            text = ""
+                            onClickEntryAdded()
+                        }
+                    }) {
+                        Icon(Icons.Filled.Check, contentDescription = "Confirm Button")
+                    }
                 }
-            },
-            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
-        ) {
-            Text("Add")
+            )
+        },
+    ){
+        Column(modifier = Modifier.padding(32.dp)) {
+
+            LaunchedEffect(key1 = mood) {
+                mood?.let {
+                    text = it.mood
+                    moodGeneral = it.currentMood
+                }
+            }
+        }
+
+        Column(modifier = Modifier.padding(32.dp)){
+
+            FlowRow(
+                modifier = Modifier.padding(8.dp),
+                horizontalArrangement = Arrangement.Start
+            ) {
+                moods.forEach { option ->
+                    var selected by remember { mutableStateOf(false) }
+                    //May be used for selecting general mood categories
+                    FilterChip(
+                        onClick = {
+                            selected = !selected
+                            if(selected)
+                                moodsPicked = option.toString()
+                            moodList.add(option.toString())
+                        },
+                        label = { Text(option.toString()) },
+                        selected = selected,
+                        leadingIcon = if (selected) {
+                            {
+                                Icon(
+                                    Icons.Filled.Done,
+                                    contentDescription = "Localized description",
+                                    Modifier.size(FilterChipDefaults.IconSize)
+                                )
+                            }
+                        } else {
+                            null
+                        },
+                    )
+                }
+            }
+
+            // Text Field for user input
+            TextField(
+                value = text,
+                label = {Text("How are you feeling?")},
+                onValueChange = { newText -> text = newText },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .padding(bottom = 8.dp)
+            )
         }
     }
+
 }
