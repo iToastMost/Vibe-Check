@@ -28,7 +28,7 @@ fun MoodCard(
             defaultElevation = 12.dp
         ),
         onClick = { onClickViewMood(uId) },
-        modifier = Modifier.size(width = 280.dp, height = 120.dp).padding(4.dp)
+        modifier = Modifier.size(width = 280.dp, height = 160.dp).padding(4.dp)
     ) {
         Column {
             Text(text = date, modifier = Modifier.padding(4.dp), textAlign = TextAlign.Center)

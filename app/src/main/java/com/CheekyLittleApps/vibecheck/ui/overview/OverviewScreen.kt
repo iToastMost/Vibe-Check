@@ -3,6 +3,10 @@ package com.CheekyLittleApps.vibecheck.ui.overview
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -33,6 +37,9 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import kotlin.time.Duration.Companion.days
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material3.IconButton
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -53,7 +60,8 @@ fun OverviewScreen(
     val dateRangePickerState = rememberDateRangePickerState()
     var startDate = dateRangePickerState.selectedStartDateMillis
     val endDate = dateRangePickerState.selectedEndDateMillis
-    val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm")
+    val formatter = SimpleDateFormat("EEE, MMM d, yyyy")
+    var isClicked by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -68,6 +76,13 @@ fun OverviewScreen(
                         textAlign = TextAlign.Center,
                         text = "Vibe Check",
                     )
+                },
+                actions = {
+                    IconButton(onClick = {
+                        isClicked = true
+                    }) {
+                        Icon(Icons.Default.DateRange, contentDescription = "Date Range Picker")
+                    }
                 }
             )
         },
@@ -89,7 +104,7 @@ fun OverviewScreen(
             }
         }
     ) { innerPadding ->
-        // Column Layout for Text Input and List Display
+        // Column Layout for List Display
         Column(modifier = Modifier.padding(innerPadding)) {
             Button(
                 onClick = {
@@ -97,19 +112,9 @@ fun OverviewScreen(
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Delete Data")
+                Text("Delete Data (ONLY FOR TESTING)")
             }
 
-            var isClicked by remember { mutableStateOf(false) }
-
-            Button(
-                onClick = {
-                    isClicked = true
-                },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Date Picker")
-            }
 
             if (isClicked)
             {
@@ -125,12 +130,10 @@ fun OverviewScreen(
                 Text(text = "Start Date: " + formatter.format(Calendar.getInstance().time) + " End Date: " + formatter.format(Calendar.getInstance().time))
             }
 
-            Column(
-                modifier = Modifier
-                    .verticalScroll(rememberScrollState())
-                    .weight(weight = 1f, fill = false)
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
             ){
-                moodEntries.value.forEach { entry ->
+                items(moodEntries.value) { entry ->
                     if(startDate != null && endDate != null)
                     {
                         //Start of implementing Calendar over the deprecated Date class

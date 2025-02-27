@@ -66,7 +66,7 @@ fun MoodEntryScreen(
     var moodsPicked by remember { mutableStateOf("") }
     val moodList = mutableListOf<String>()
 
-    val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm")
+    val formatter = SimpleDateFormat("EEE, MMM d, yyyy")
     val moods = enumValues<MoodColor>()
 
 
@@ -105,8 +105,8 @@ fun MoodEntryScreen(
                 }
             )
         },
-    ) {
-        Column(modifier = Modifier.padding(32.dp)) {
+    ) { innerPadding ->
+        Column(modifier = Modifier.padding(innerPadding)) {
 
             FlowRow(
                 modifier = Modifier.padding(8.dp),

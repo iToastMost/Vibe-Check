@@ -97,8 +97,8 @@ fun ViewMoodScreen(
                 }
             )
         },
-    ){
-        Column(modifier = Modifier.padding(32.dp)) {
+    ){ innerPadding ->
+        Column(modifier = Modifier.padding(innerPadding)) {
 
             LaunchedEffect(key1 = mood) {
                 mood?.let {
@@ -108,7 +108,7 @@ fun ViewMoodScreen(
             }
         }
 
-        Column(modifier = Modifier.padding(32.dp)){
+        Column(modifier = Modifier.padding(innerPadding)){
 
             FlowRow(
                 modifier = Modifier.padding(8.dp),
