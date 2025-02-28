@@ -38,7 +38,14 @@ import java.util.Calendar
 import java.util.Date
 import kotlin.time.Duration.Companion.days
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.IconButton
+import com.CheekyLittleApps.vibecheck.ui.alerts.SimpleAlertDialog
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -49,7 +56,7 @@ fun OverviewScreen(
     //onClickViewMood: (String) -> Unit = {},
     onClickViewMood: (Int) -> Unit = {}
 ) {
-
+    var expanded by remember { mutableStateOf(false) }
     val moodEntries = viewModel.getAllMoodEntries().collectAsState(initial = emptyList())
     // MutableState to keep track of the input text
     // List to store user input
@@ -62,6 +69,7 @@ fun OverviewScreen(
     val endDate = dateRangePickerState.selectedEndDateMillis
     val formatter = SimpleDateFormat("EEE, MMM d, yyyy")
     var isClicked by remember { mutableStateOf(false) }
+    var isDeleteClicked by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -76,6 +84,21 @@ fun OverviewScreen(
                         textAlign = TextAlign.Center,
                         text = "Vibe Check",
                     )
+                },
+                navigationIcon = {
+                    IconButton(onClick = { expanded = !expanded }) {
+                        Icon(Icons.Default.Menu, contentDescription = "Dropdown Menu")
+                    }
+
+                    DropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false }) {
+                        DropdownMenuItem(
+                            text = { Text("Delete Data") },
+                            leadingIcon = { Icon(Icons.Outlined.Delete, contentDescription = "Delete All Data Button")},
+                            onClick = { isDeleteClicked = true },
+                        )
+                    }
                 },
                 actions = {
                     IconButton(onClick = {
@@ -106,19 +129,14 @@ fun OverviewScreen(
     ) { innerPadding ->
         // Column Layout for List Display
         Column(modifier = Modifier.padding(innerPadding)) {
-            Button(
-                onClick = {
-                    viewModel.nuke()
-                },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Delete Data (ONLY FOR TESTING)")
-            }
-
 
             if (isClicked)
             {
                 DateRangePickerModal(onDateRangeSelected = ({ dateRange -> System.currentTimeMillis(); System.currentTimeMillis()}), { isClicked = false }, dateRangePickerState)
+            }
+
+            if(isDeleteClicked){
+                SimpleAlertDialog(viewModel, { isDeleteClicked = false })
             }
 
             if(startDate != null && endDate != null)
