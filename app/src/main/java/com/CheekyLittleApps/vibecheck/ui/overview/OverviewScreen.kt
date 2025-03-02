@@ -41,6 +41,8 @@ import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -96,7 +98,26 @@ fun OverviewScreen(
                         DropdownMenuItem(
                             text = { Text("Delete Data") },
                             leadingIcon = { Icon(Icons.Outlined.Delete, contentDescription = "Delete All Data Button")},
-                            onClick = { isDeleteClicked = true },
+                            onClick = {
+                                isDeleteClicked = true
+                                expanded = false
+                                      },
+                        )
+
+                        DropdownMenuItem(
+                            text = { Text("Settings")},
+                            leadingIcon = {Icon(Icons.Outlined.Settings, contentDescription = "App settings button")},
+                            onClick = {
+                                expanded = false
+                            }
+                        )
+
+                        DropdownMenuItem(
+                            text = { Text("Export to CSV")},
+                            leadingIcon = {Icon(Icons.Outlined.Share, contentDescription = "Export to CSV button")},
+                            onClick = {
+                                expanded = false
+                            }
                         )
                     }
                 },

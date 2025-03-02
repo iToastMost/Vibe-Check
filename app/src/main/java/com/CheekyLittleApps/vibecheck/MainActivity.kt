@@ -5,6 +5,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -64,10 +67,14 @@ fun VibeApp(viewModel: MainViewModel)
         topBar = {
 
         },
-    ){ innerPadding ->
+    ){
         NavHost(
             navController = navController,
-            startDestination = Overview.route
+            startDestination = Overview.route,
+            enterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Start, tween(700))},
+            exitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Start, tween(700))},
+            popEnterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.End, tween(700)) },
+            popExitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.End, tween(700)) },
         ) {
             //TODO Fix onClickViewMood here to navigate with roomId
             composable(route = Overview.route){
@@ -92,8 +99,6 @@ fun VibeApp(viewModel: MainViewModel)
                 val roomId =
                     navBackStackEntry.arguments?.getInt("roomId") ?: 0
 
-                val mood = roomId
-                val moodText = roomId
                 ViewMoodScreen(viewModel, roomId,
                     onClickEntryAdded = { navController.navigateSingleTopTo(Overview.route)}
                 )
