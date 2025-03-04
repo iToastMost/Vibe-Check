@@ -1,5 +1,6 @@
 package com.CheekyLittleApps.vibecheck.ui.overview
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -40,6 +41,7 @@ import kotlin.time.Duration.Companion.days
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Share
@@ -122,6 +124,12 @@ fun OverviewScreen(
                     }
                 },
                 actions = {
+
+                    IconButton(onClick = {
+                    }){
+                        Icon(Icons.Default.Notifications, contentDescription = "Send notification button")
+                    }
+
                     IconButton(onClick = {
                         isClicked = true
                     }) {
