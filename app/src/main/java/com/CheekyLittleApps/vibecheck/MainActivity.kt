@@ -4,14 +4,15 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.content.Context
+import android.app.PendingIntent
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.animation.AnimatedContent
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.material3.Scaffold
@@ -20,7 +21,6 @@ import androidx.compose.runtime.getValue
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -43,46 +43,12 @@ import kotlinx.coroutines.withContext
 class MainActivity : ComponentActivity()
 {
     private val moodDatabase by lazy {MoodDatabase.getDatabase(this).moodDao()}
-
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-//        val builder = NotificationCompat.Builder(this, "CHANNEL_ID")
-//            .setContentTitle("Title")
-//            .setContentText("Text")
-//            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-//
-//        fun createNotificationChannel(){
-//            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-//                val name = "Notification Channel"
-//                val descriptionText = "Mood Notification Channel"
-//                val importance = NotificationManager.IMPORTANCE_LOW
-//                val channel = NotificationChannel("CHANNEL_ID", name, importance).apply { description = descriptionText  }
-//
-//                val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-//                notificationManager.createNotificationChannel(channel)
-//            }
-//
-//            with(NotificationManagerCompat.from(this)) {
-//                if (ActivityCompat.checkSelfPermission(
-//                        this@MainActivity,
-//                        Manifest.permission.POST_NOTIFICATIONS
-//                    ) != PackageManager.PERMISSION_GRANTED
-//                ) {
-//                    // TODO: Consider calling
-//                    // ActivityCompat#requestPermissions
-//                    // here to request the missing permissions, and then overriding
-//                    // public fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>,
-//                    //                                        grantResults: IntArray)
-//                    // to handle the case where the user grants the permission. See the documentation
-//                    // for ActivityCompat#requestPermissions for more details.
-//
-//                    return@with
-//                }
-//                // notificationId is a unique int for each notification that you must define.
-//                notify(1, builder.build())
-//            }
+        createNotificationChannel()
 
         val db = Room.databaseBuilder(applicationContext, MoodDatabase::class.java, "mood_entries").fallbackToDestructiveMigration(true).build()
         val viewModel = MainViewModel(db.moodDao())
@@ -97,13 +63,62 @@ class MainActivity : ComponentActivity()
                     VibeApp(viewModel)
                 }
             }
+        }
     }
-}}
+        private fun createNotificationChannel(){
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+                val name = "Notification Channel"
+                val descriptionText = "Mood Notification Channel"
+                val importance = NotificationManager.IMPORTANCE_LOW
+                val channel = NotificationChannel(CHANNEL_ID, name, importance).apply { description = descriptionText  }
 
+                val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+                notificationManager.createNotificationChannel(channel)
+            }
+        }
+
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    private fun sendNotification(){
+        val intent = Intent()
+        intent.action = Intent.ACTION_VIEW
+        intent.data
+
+        val pendingIntent = PendingIntent.getActivity(this, 6, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+
+        val builder = NotificationCompat.Builder(this, CHANNEL_ID)
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setContentTitle("Vibe Checkin In")
+            .setContentText("How are we feeling today?")
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            //.addAction(0, "", pendingIntent)
+
+        with(NotificationManagerCompat.from(this)){
+            if (ActivityCompat.checkSelfPermission(
+                    this@MainActivity,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                ActivityCompat.requestPermissions(
+                    this@MainActivity,
+                    arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                    101)
+                return
+            }
+            notify(NOTIFICATION_ID, builder.build())
+        }
+
+    }
+
+    companion object{
+        const val CHANNEL_ID = "channel"
+        const val NOTIFICATION_ID = 1234
+        const val DESCRIPTION = "Test notification"
+    }
+
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun VibeApp(viewModel: MainViewModel)
-{
+fun VibeApp(viewModel: MainViewModel) {
     val navController = rememberNavController()
     val currentBackStack by navController.currentBackStackEntryAsState()
     val currentDestination = currentBackStack?.destination
@@ -126,7 +141,8 @@ fun VibeApp(viewModel: MainViewModel)
             composable(route = Overview.route){
                 OverviewScreen(viewModel,
                     onClickAddEntry = {navController.navigateSingleTopTo(Mood.route)},
-                    onClickViewMood = { roomId -> navController.navigateToMood(roomId)}
+                    onClickViewMood = { roomId -> navController.navigateToMood(roomId)},
+                    onClickSendNotification = { sendNotification() }
                     //onClickViewMood = {navController.navigateSingleTopTo(ViewMood.route)}
                 )
             }
@@ -167,4 +183,6 @@ fun NavHostController.navigateSingleTopTo(route: String) = this.navigate(route) 
 
 private fun NavHostController.navigateToMood(roomId: Int){
     this.navigateSingleTopTo("${ViewMood.route}/$roomId")
+}
+
 }
