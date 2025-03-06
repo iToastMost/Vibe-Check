@@ -2,6 +2,7 @@ package com.CheekyLittleApps.vibecheck
 
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 
 interface VibeDestination
 {
@@ -14,6 +15,10 @@ object Overview : VibeDestination {
 
 object Mood : VibeDestination {
     override val route = "vibe_destination"
+
+    val deepLinks = listOf(
+        navDeepLink { uriPattern = "vibecheck://$route" }
+    )
 }
 
 object ViewMood : VibeDestination {

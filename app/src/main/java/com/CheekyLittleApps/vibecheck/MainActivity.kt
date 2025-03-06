@@ -21,6 +21,8 @@ import androidx.compose.runtime.getValue
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.app.TaskStackBuilder
+import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -34,6 +36,7 @@ import com.CheekyLittleApps.vibecheck.model.MoodEntry
 import com.CheekyLittleApps.vibecheck.ui.moodentry.MoodEntryScreen
 import com.CheekyLittleApps.vibecheck.ui.overview.OverviewScreen
 import com.CheekyLittleApps.vibecheck.ui.viewmood.ViewMoodScreen
+import com.CheekyLittleApps.vibecheck.utils.NotificationHelper
 import com.CheekyLittleApps.vibecheck.viewmodel.MainViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -81,16 +84,20 @@ class MainActivity : ComponentActivity()
     private fun sendNotification(){
         val intent = Intent()
         intent.action = Intent.ACTION_VIEW
-        intent.data
+        intent.data = "vibecheck://vibe_destination".toUri()
 
-        val pendingIntent = PendingIntent.getActivity(this, 6, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+        val pendingIntent = TaskStackBuilder.create(this).run {
+            addNextIntentWithParentStack(intent)
+            getPendingIntent(1234, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+        }
 
         val builder = NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentTitle("Vibe Checkin In")
             .setContentText("How are we feeling today?")
+            .setContentIntent(pendingIntent)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-            //.addAction(0, "", pendingIntent)
+            .setAutoCancel(true)
 
         with(NotificationManagerCompat.from(this)){
             if (ActivityCompat.checkSelfPermission(
@@ -138,7 +145,9 @@ fun VibeApp(viewModel: MainViewModel) {
             popExitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.End, tween(700)) },
         ) {
             //TODO Fix onClickViewMood here to navigate with roomId
-            composable(route = Overview.route){
+            composable(
+                route = Overview.route,
+            ){
                 OverviewScreen(viewModel,
                     onClickAddEntry = {navController.navigateSingleTopTo(Mood.route)},
                     onClickViewMood = { roomId -> navController.navigateToMood(roomId)},
@@ -147,7 +156,10 @@ fun VibeApp(viewModel: MainViewModel) {
                 )
             }
 
-            composable(route = Mood.route) {
+            composable(
+                route = Mood.route,
+                deepLinks = Mood.deepLinks
+            ) {
                 MoodEntryScreen(viewModel,
                     onClickEntryAdded = {navController.navigateSingleTopTo(Overview.route)}
                 )
