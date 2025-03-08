@@ -104,6 +104,8 @@ fun ViewMoodScreen(
                 mood?.let {
                     text = it.mood
                     moodGeneral = it.currentMood
+                    moodsPicked = moodGeneral
+                    moodList.add(moodsPicked)
                 }
             }
         }
@@ -116,13 +118,27 @@ fun ViewMoodScreen(
             ) {
                 moods.forEach { option ->
                     var selected by remember { mutableStateOf(false) }
+
+                    if(moodList.contains(option.toString())){
+                        selected = true
+                    }
+                    else{
+                        selected = false
+                    }
+
                     //May be used for selecting general mood categories
                     FilterChip(
                         onClick = {
-                            selected = !selected
-                            if(selected)
+                            if(moodList.contains(option.toString())){
+                                moodList.remove(option.toString())
+                                //selected = false
+                            } else {
+                                moodList.add(option.toString())
                                 moodsPicked = option.toString()
-                            moodList.add(option.toString())
+                                //selected = true
+                            }
+
+
                         },
                         label = { Text(option.toString()) },
                         selected = selected,

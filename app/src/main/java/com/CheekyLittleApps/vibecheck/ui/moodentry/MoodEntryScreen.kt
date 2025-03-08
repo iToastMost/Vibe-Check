@@ -62,6 +62,7 @@ fun MoodEntryScreen(
     onClickEntryAdded: () -> Unit = {},
 ){
     var text by remember { mutableStateOf("") }
+    var numberSelected = 0
     //var expanded by remember { mutableStateOf(false) }
     var moodsPicked by remember { mutableStateOf("") }
     val moodList = mutableListOf<String>()
@@ -117,10 +118,21 @@ fun MoodEntryScreen(
                     //May be used for selecting general mood categories
                     FilterChip(
                         onClick = {
-                            selected = !selected
-                            if (selected)
-                                moodsPicked = option.toString()
-                            moodList.add(option.toString())
+                            if(moodList.size < 3){
+                                selected = !selected
+
+                                if (selected) {
+                                    moodsPicked = option.toString()
+                                    moodList.add(option.toString())
+                                }
+                                else{
+                                    moodsPicked = ""
+                                    moodList.remove(option.toString())
+                                }
+                            } else {
+                                selected = false
+                                moodList.remove(option.toString())
+                            }
                         },
                         label = { Text(option.toString()) },
                         selected = selected,
