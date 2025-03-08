@@ -42,6 +42,7 @@ import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.IconButton
+import com.CheekyLittleApps.vibecheck.ui.TimePickerModal
 import com.CheekyLittleApps.vibecheck.ui.alerts.SimpleAlertDialog
 
 
@@ -70,6 +71,7 @@ fun OverviewScreen(
     var isDeleteClicked by remember { mutableStateOf(false) }
     var isSettingsClicked by remember { mutableStateOf(false) }
     var isExportClicked by remember { mutableStateOf(false) }
+    var isTimePickerClicked by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -124,7 +126,8 @@ fun OverviewScreen(
                 actions = {
 
                     IconButton(onClick = {
-                        onClickSendNotification()
+                        //onClickSendNotification()
+                        isTimePickerClicked = true
                     }){
                         Icon(Icons.Default.Notifications, contentDescription = "Send notification button")
                     }
@@ -179,6 +182,10 @@ fun OverviewScreen(
                 SimpleAlertDialog(viewModel, { isExportClicked = false },
                     "Export to CSV is a feature currently being worked on. Thank you for your patience.",
                     {  })
+            }
+
+            if(isTimePickerClicked){
+                TimePickerModal( {isTimePickerClicked = false}, {isTimePickerClicked = false})
             }
 
             if(startDate != null && endDate != null)
