@@ -65,7 +65,7 @@ fun MoodEntryScreen(
     var numberSelected = 0
     //var expanded by remember { mutableStateOf(false) }
     var moodsPicked by remember { mutableStateOf("") }
-    val moodList = mutableListOf<String>()
+    var moodList by remember { mutableStateOf(setOf<String>()) }
 
     val formatter = SimpleDateFormat("EEE, MMM d, yyyy")
     val moods = enumValues<MoodColor>()
@@ -95,7 +95,7 @@ fun MoodEntryScreen(
                             val date = Calendar.getInstance().time
                             val currentDate = formatter.format(date)
                             val currentTime = System.currentTimeMillis()
-                            var moodEntry = MoodEntry(date = currentDate, time = currentTime, mood = text, currentMood = moodsPicked)
+                            var moodEntry = MoodEntry(date = currentDate, time = currentTime, mood = text, currentMood = moodList.joinToString(", "))
                             viewModel.addMoodEntry(moodEntry)
                             text = ""
                             onClickEntryAdded()
@@ -114,24 +114,19 @@ fun MoodEntryScreen(
                 horizontalArrangement = Arrangement.Start
             ) {
                 moods.forEach { option ->
-                    var selected by remember { mutableStateOf(false) }
+                    val selected = moodList.contains(option.toString())
                     //May be used for selecting general mood categories
                     FilterChip(
                         onClick = {
                             if(moodList.size < 3){
-                                selected = !selected
-
-                                if (selected) {
-                                    moodsPicked = option.toString()
-                                    moodList.add(option.toString())
+                                moodList = if (selected) {
+                                    moodList - option.toString()
                                 }
                                 else{
-                                    moodsPicked = ""
-                                    moodList.remove(option.toString())
+                                    moodList + option.toString()
                                 }
                             } else {
-                                selected = false
-                                moodList.remove(option.toString())
+                                moodList = moodList - option.toString()
                             }
                         },
                         label = { Text(option.toString()) },

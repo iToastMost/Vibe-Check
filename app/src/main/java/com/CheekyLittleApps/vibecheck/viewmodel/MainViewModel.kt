@@ -33,6 +33,12 @@ class MainViewModel(private val dao: MoodDao) : ViewModel()
         }
     }
 
+    fun deleteMoodEntry(moodEntry: MoodEntry){
+        viewModelScope.launch(Dispatchers.IO) {
+            dao.deleteMoodEntry(moodEntry)
+        }
+    }
+
     fun nuke()
     {
         viewModelScope.launch(Dispatchers.IO)

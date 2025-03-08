@@ -12,6 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -38,6 +39,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.CheekyLittleApps.vibecheck.data.MoodColor
 import com.CheekyLittleApps.vibecheck.model.MoodEntry
+import com.CheekyLittleApps.vibecheck.ui.alerts.SimpleAlertDialog
 import com.CheekyLittleApps.vibecheck.viewmodel.MainViewModel
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -54,8 +56,9 @@ fun ViewMoodScreen(
     var moodGeneral: String
     //var expanded by remember { mutableStateOf(false) }
     var moodsPicked by remember { mutableStateOf("") }
-    val moodList = mutableListOf<String>()
+    var moodList by remember { mutableStateOf(setOf<String>()) }
     var text by remember { mutableStateOf("") }
+    var isDeleteClicked by remember { mutableStateOf(false) }
 
     val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm")
     val moods = enumValues<MoodColor>()
@@ -79,13 +82,18 @@ fun ViewMoodScreen(
                 },
                 actions = {
 
+                    IconButton(onClick = {
+                        isDeleteClicked = true
+                    }){
+                        Icon(Icons.Default.Delete, contentDescription = "Delete Button for Mood Entry")
+                    }
 
                     IconButton(onClick = {
                         if (text.isNotBlank()) {
                             // Add input text to the list and clear input field
                             mood?.let {
                                 it.mood = text
-                                it.currentMood = moodsPicked
+                                it.currentMood = moodList.joinToString(", ")
                                 viewModel.updateMoodEntry(it)
                             }
                             text = ""
@@ -100,12 +108,18 @@ fun ViewMoodScreen(
     ){ innerPadding ->
         Column(modifier = Modifier.padding(innerPadding)) {
 
+            if(isDeleteClicked){
+                SimpleAlertDialog(viewModel, { isDeleteClicked = false },
+                    "This will delete your entry permanently. Are you sure you want to do this?",
+                    { mood?.let { viewModel.deleteMoodEntry(it)
+                    onClickEntryAdded()} })
+            }
+
             LaunchedEffect(key1 = mood) {
                 mood?.let {
                     text = it.mood
-                    moodGeneral = it.currentMood
-                    moodsPicked = moodGeneral
-                    moodList.add(moodsPicked)
+                    moodsPicked = it.currentMood
+                    moodList = it.currentMood.split(", ").toSet()
                 }
             }
         }
@@ -117,27 +131,20 @@ fun ViewMoodScreen(
                 horizontalArrangement = Arrangement.Start
             ) {
                 moods.forEach { option ->
-                    var selected by remember { mutableStateOf(false) }
-
-                    if(moodList.contains(option.toString())){
-                        selected = true
-                    }
-                    else{
-                        selected = false
-                    }
+                    val selected = moodList.contains(option.toString())
 
                     //May be used for selecting general mood categories
                     FilterChip(
                         onClick = {
-                            if(moodList.contains(option.toString())){
-                                moodList.remove(option.toString())
-                                //selected = false
-                            } else {
-                                moodList.add(option.toString())
-                                moodsPicked = option.toString()
-                                //selected = true
+                            if(moodList.size < 3) {
+                                moodList = if (selected){
+                                    moodList - option.toString()
+                                } else{
+                                    moodList + option.toString()
+                                }
+                            } else{
+                                moodList = moodList - option.toString()
                             }
-
 
                         },
                         label = { Text(option.toString()) },

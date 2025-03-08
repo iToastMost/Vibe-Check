@@ -27,7 +27,7 @@ interface MoodDao
 
 
     @Delete
-    suspend fun delete(moodEntry: MoodEntry)
+    fun deleteMoodEntry(vararg moodEntries: MoodEntry)
 
     @Query("DELETE FROM mood_entries")
     fun nukeTable()

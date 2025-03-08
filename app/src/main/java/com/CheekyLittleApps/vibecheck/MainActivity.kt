@@ -165,7 +165,6 @@ fun VibeApp(viewModel: MainViewModel) {
                 )
             }
 
-            //TODO Link up ViewMoodScreen navArgs here
             composable(
                 route = ViewMood.routeWithArgs,
                 arguments = ViewMood.arguments,

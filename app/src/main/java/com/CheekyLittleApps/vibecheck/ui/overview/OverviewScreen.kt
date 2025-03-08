@@ -68,6 +68,8 @@ fun OverviewScreen(
     val formatter = SimpleDateFormat("EEE, MMM d, yyyy")
     var isClicked by remember { mutableStateOf(false) }
     var isDeleteClicked by remember { mutableStateOf(false) }
+    var isSettingsClicked by remember { mutableStateOf(false) }
+    var isExportClicked by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -104,6 +106,7 @@ fun OverviewScreen(
                             text = { Text("Settings")},
                             leadingIcon = {Icon(Icons.Outlined.Settings, contentDescription = "App settings button")},
                             onClick = {
+                                isSettingsClicked = true
                                 expanded = false
                             }
                         )
@@ -112,6 +115,7 @@ fun OverviewScreen(
                             text = { Text("Export to CSV")},
                             leadingIcon = {Icon(Icons.Outlined.Share, contentDescription = "Export to CSV button")},
                             onClick = {
+                                isExportClicked = true
                                 expanded = false
                             }
                         )
@@ -160,7 +164,21 @@ fun OverviewScreen(
             }
 
             if(isDeleteClicked){
-                SimpleAlertDialog(viewModel, { isDeleteClicked = false })
+                SimpleAlertDialog(viewModel, { isDeleteClicked = false },
+                    "This will delete all of your data and there is no way to retrieve it. Are you sure you want to do this?",
+                    { viewModel.nuke() })
+            }
+
+            if(isSettingsClicked){
+                SimpleAlertDialog(viewModel, { isSettingsClicked = false },
+                    "Settings will be added in a future update when there are more options like themes.",
+                    {  })
+            }
+
+            if(isExportClicked){
+                SimpleAlertDialog(viewModel, { isExportClicked = false },
+                    "Export to CSV is a feature currently being worked on. Thank you for your patience.",
+                    {  })
             }
 
             if(startDate != null && endDate != null)
