@@ -126,7 +126,7 @@ fun OverviewScreen(
                 actions = {
 
                     IconButton(onClick = {
-                        //onClickSendNotification()
+                        onClickSendNotification()
                         isTimePickerClicked = true
                     }){
                         Icon(Icons.Default.Notifications, contentDescription = "Send notification button")
