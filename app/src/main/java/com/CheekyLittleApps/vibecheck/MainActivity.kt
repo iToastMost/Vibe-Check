@@ -9,9 +9,11 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
@@ -38,6 +40,11 @@ import com.CheekyLittleApps.vibecheck.ui.overview.OverviewScreen
 import com.CheekyLittleApps.vibecheck.ui.viewmood.ViewMoodScreen
 import com.CheekyLittleApps.vibecheck.utils.NotificationHelper
 import com.CheekyLittleApps.vibecheck.viewmodel.MainViewModel
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory
+import com.google.android.play.core.appupdate.AppUpdateOptions
+import com.google.android.play.core.install.model.ActivityResult
+import com.google.android.play.core.install.model.AppUpdateType
+import com.google.android.play.core.install.model.UpdateAvailability
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -46,10 +53,37 @@ import kotlinx.coroutines.withContext
 class MainActivity : ComponentActivity()
 {
     private val moodDatabase by lazy {MoodDatabase.getDatabase(this).moodDao()}
+    val DAYS_FOR_IMMEDIATE_UPDATE = 3
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+//        val appUpdateManager = AppUpdateManagerFactory.create(this)
+//
+//        val appUpdateInfoTask = appUpdateManager.appUpdateInfo
+//
+//
+//
+//        appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
+//            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
+//                && (appUpdateInfo.clientVersionStalenessDays() ?: -1 ) >= DAYS_FOR_IMMEDIATE_UPDATE
+//                && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)){
+//                // Request update
+//
+//                val activityResultLauncher = registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result: androidx.activity.result.ActivityResult ->
+//                    if (result.resultCode != RESULT_OK) {
+//                        Log.d("Res", "Update flow failed! Result code: " + result.resultCode)
+//                    }
+//                }
+//
+//                appUpdateManager.startUpdateFlowForResult(
+//                    appUpdateInfo,
+//                    activityResultLauncher,
+//                    AppUpdateOptions.newBuilder(AppUpdateType.IMMEDIATE).build()
+//                )
+//            }
+//        }
 
         createNotificationChannel()
 

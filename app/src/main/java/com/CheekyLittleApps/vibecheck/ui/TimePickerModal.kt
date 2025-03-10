@@ -63,7 +63,6 @@ fun TimePickerModal(
                     Box(Modifier.fillMaxWidth()){
                         TextButton(
                             onClick = {
-                                //openDialog.value = false
                                 onDismiss()
                             },
                             modifier = Modifier.align(Alignment.BottomStart)
@@ -73,7 +72,6 @@ fun TimePickerModal(
 
                         TextButton(
                             onClick = {
-                                //openDialog.value = false
                                 onDismiss()
                                 //onClickConfirm()
                             },
