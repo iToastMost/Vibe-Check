@@ -1,5 +1,8 @@
 package com.CheekyLittleApps.vibecheck.ui
 
+import android.content.Context
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,16 +26,25 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.CheekyLittleApps.vibecheck.data.AlarmItem
+import com.CheekyLittleApps.vibecheck.utils.AlarmScheduler
+import com.CheekyLittleApps.vibecheck.utils.AlarmSchedulerHelper
+import java.time.LocalDateTime
 import java.util.Calendar
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TimePickerModal(
     onDismiss: () -> Unit,
-    onConfirm: () -> Unit
+    onConfirm: () -> Unit,
+    context: Context
 ){
     var showDialog by remember { mutableStateOf(true) }
     val currentTime = Calendar.getInstance()
+
+    val alarmScheduler : AlarmScheduler = AlarmSchedulerHelper(context)
+    var alarmItem : AlarmItem? = null
 
     val timePickerSate = rememberTimePickerState(
         initialHour = currentTime.get(Calendar.HOUR_OF_DAY),
@@ -64,6 +76,7 @@ fun TimePickerModal(
                         TextButton(
                             onClick = {
                                 onDismiss()
+                                alarmItem?.let (alarmScheduler::cancel)
                             },
                             modifier = Modifier.align(Alignment.BottomStart)
                         ) {
@@ -74,6 +87,10 @@ fun TimePickerModal(
                             onClick = {
                                 onDismiss()
                                 //onClickConfirm()
+                                alarmItem = AlarmItem(
+                                    alarmTime = LocalDateTime.now().plusSeconds(10), "message"
+                                )
+                                alarmItem?.let (alarmScheduler::schedule)
                             },
                             modifier = Modifier.align(Alignment.BottomEnd)
                         ) {

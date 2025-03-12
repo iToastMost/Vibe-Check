@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -33,11 +34,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.room.Room
+import com.CheekyLittleApps.vibecheck.data.AlarmItem
 import com.CheekyLittleApps.vibecheck.data.MoodDatabase
 import com.CheekyLittleApps.vibecheck.model.MoodEntry
 import com.CheekyLittleApps.vibecheck.ui.moodentry.MoodEntryScreen
 import com.CheekyLittleApps.vibecheck.ui.overview.OverviewScreen
 import com.CheekyLittleApps.vibecheck.ui.viewmood.ViewMoodScreen
+import com.CheekyLittleApps.vibecheck.utils.AlarmScheduler
+import com.CheekyLittleApps.vibecheck.utils.AlarmSchedulerHelper
 import com.CheekyLittleApps.vibecheck.utils.NotificationHelper
 import com.CheekyLittleApps.vibecheck.viewmodel.MainViewModel
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
@@ -59,31 +63,7 @@ class MainActivity : ComponentActivity()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-//        val appUpdateManager = AppUpdateManagerFactory.create(this)
-//
-//        val appUpdateInfoTask = appUpdateManager.appUpdateInfo
-//
-//
-//
-//        appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
-//            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
-//                && (appUpdateInfo.clientVersionStalenessDays() ?: -1 ) >= DAYS_FOR_IMMEDIATE_UPDATE
-//                && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)){
-//                // Request update
-//
-//                val activityResultLauncher = registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result: androidx.activity.result.ActivityResult ->
-//                    if (result.resultCode != RESULT_OK) {
-//                        Log.d("Res", "Update flow failed! Result code: " + result.resultCode)
-//                    }
-//                }
-//
-//                appUpdateManager.startUpdateFlowForResult(
-//                    appUpdateInfo,
-//                    activityResultLauncher,
-//                    AppUpdateOptions.newBuilder(AppUpdateType.IMMEDIATE).build()
-//                )
-//            }
-//        }
+        val context = this
 
         createNotificationChannel()
 
@@ -97,17 +77,17 @@ class MainActivity : ComponentActivity()
             withContext(Dispatchers.Main) {
                 // Update your UI with the fetched data
                 setContent {
-                    VibeApp(viewModel)
+                    VibeApp(viewModel, context)
                 }
             }
         }
     }
         private fun createNotificationChannel(){
             if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-                val name = "Notification Channel"
-                val descriptionText = "Mood Notification Channel"
+                val channelId = "alarm_id"
+                val channelName = "alarm_name"
                 val importance = NotificationManager.IMPORTANCE_LOW
-                val channel = NotificationChannel(CHANNEL_ID, name, importance).apply { description = descriptionText  }
+                val channel = NotificationChannel(channelId, channelName, importance)
 
                 val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
                 notificationManager.createNotificationChannel(channel)
@@ -159,7 +139,7 @@ class MainActivity : ComponentActivity()
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun VibeApp(viewModel: MainViewModel) {
+fun VibeApp(viewModel: MainViewModel, context: Context) {
     val navController = rememberNavController()
     val currentBackStack by navController.currentBackStackEntryAsState()
     val currentDestination = currentBackStack?.destination
@@ -185,7 +165,8 @@ fun VibeApp(viewModel: MainViewModel) {
                 OverviewScreen(viewModel,
                     onClickAddEntry = {navController.navigateSingleTopTo(Mood.route)},
                     onClickViewMood = { roomId -> navController.navigateToMood(roomId)},
-                    onClickSendNotification = { sendNotification() }
+                    onClickSendNotification = { sendNotification() },
+                    context
                     //onClickViewMood = {navController.navigateSingleTopTo(ViewMood.route)}
                 )
             }

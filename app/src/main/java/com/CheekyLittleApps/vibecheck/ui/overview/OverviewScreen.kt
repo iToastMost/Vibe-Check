@@ -1,5 +1,8 @@
 package com.CheekyLittleApps.vibecheck.ui.overview
 
+import android.content.Context
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -42,10 +45,14 @@ import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.IconButton
+import com.CheekyLittleApps.vibecheck.data.AlarmItem
 import com.CheekyLittleApps.vibecheck.ui.TimePickerModal
 import com.CheekyLittleApps.vibecheck.ui.alerts.SimpleAlertDialog
+import com.CheekyLittleApps.vibecheck.utils.AlarmScheduler
+import com.CheekyLittleApps.vibecheck.utils.AlarmSchedulerHelper
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OverviewScreen(
@@ -53,13 +60,17 @@ fun OverviewScreen(
     onClickAddEntry: () -> Unit = {},
     //onClickViewMood: (String) -> Unit = {},
     onClickViewMood: (Int) -> Unit = {},
-    onClickSendNotification: () -> Unit
+    onClickSendNotification: () -> Unit,
+    context: Context
 ) {
     var expanded by remember { mutableStateOf(false) }
     val moodEntries = viewModel.getAllMoodEntries().collectAsState(initial = emptyList())
     // MutableState to keep track of the input text
     // List to store user input
     var itemList by remember { mutableStateOf(listOf<String>()) }
+
+//    val alarmScheduler : AlarmScheduler = AlarmSchedulerHelper(context)
+//    val alarmItem : AlarmItem? = null
 
     val calendar = Calendar.getInstance()
     val currentDay = Date()
@@ -126,7 +137,7 @@ fun OverviewScreen(
                 actions = {
 
                     IconButton(onClick = {
-                        onClickSendNotification()
+                        //onClickSendNotification()
                         isTimePickerClicked = true
                     }){
                         Icon(Icons.Default.Notifications, contentDescription = "Send notification button")
@@ -185,7 +196,7 @@ fun OverviewScreen(
             }
 
             if(isTimePickerClicked){
-                TimePickerModal( {isTimePickerClicked = false}, {isTimePickerClicked = false})
+                TimePickerModal( {isTimePickerClicked = false}, {isTimePickerClicked = false}, context)
             }
 
             if(startDate != null && endDate != null)
