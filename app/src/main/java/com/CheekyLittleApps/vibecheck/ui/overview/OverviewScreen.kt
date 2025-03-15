@@ -61,6 +61,7 @@ fun OverviewScreen(
     //onClickViewMood: (String) -> Unit = {},
     onClickViewMood: (Int) -> Unit = {},
     onClickSendNotification: () -> Unit,
+    onClickAlarm: () -> Unit,
     context: Context
 ) {
     var expanded by remember { mutableStateOf(false) }
@@ -138,7 +139,8 @@ fun OverviewScreen(
 
                     IconButton(onClick = {
                         //onClickSendNotification()
-                        isTimePickerClicked = true
+                        //isTimePickerClicked = true
+                        onClickAlarm()
                     }){
                         Icon(Icons.Default.Notifications, contentDescription = "Send notification button")
                     }

@@ -37,6 +37,7 @@ import androidx.room.Room
 import com.CheekyLittleApps.vibecheck.data.AlarmItem
 import com.CheekyLittleApps.vibecheck.data.MoodDatabase
 import com.CheekyLittleApps.vibecheck.model.MoodEntry
+import com.CheekyLittleApps.vibecheck.ui.alarm.AlarmScreen
 import com.CheekyLittleApps.vibecheck.ui.moodentry.MoodEntryScreen
 import com.CheekyLittleApps.vibecheck.ui.overview.OverviewScreen
 import com.CheekyLittleApps.vibecheck.ui.viewmood.ViewMoodScreen
@@ -44,11 +45,7 @@ import com.CheekyLittleApps.vibecheck.utils.AlarmScheduler
 import com.CheekyLittleApps.vibecheck.utils.AlarmSchedulerHelper
 import com.CheekyLittleApps.vibecheck.utils.NotificationHelper
 import com.CheekyLittleApps.vibecheck.viewmodel.MainViewModel
-import com.google.android.play.core.appupdate.AppUpdateManagerFactory
-import com.google.android.play.core.appupdate.AppUpdateOptions
-import com.google.android.play.core.install.model.ActivityResult
-import com.google.android.play.core.install.model.AppUpdateType
-import com.google.android.play.core.install.model.UpdateAvailability
+
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -166,6 +163,7 @@ fun VibeApp(viewModel: MainViewModel, context: Context) {
                     onClickAddEntry = {navController.navigateSingleTopTo(Mood.route)},
                     onClickViewMood = { roomId -> navController.navigateToMood(roomId)},
                     onClickSendNotification = { sendNotification() },
+                    onClickAlarm = {navController.navigateSingleTopTo(Alarm.route)},
                     context
                     //onClickViewMood = {navController.navigateSingleTopTo(ViewMood.route)}
                 )
@@ -190,6 +188,12 @@ fun VibeApp(viewModel: MainViewModel, context: Context) {
                 ViewMoodScreen(viewModel, roomId,
                     onClickEntryAdded = { navController.navigateSingleTopTo(Overview.route)}
                 )
+            }
+
+            composable(
+                route = Alarm.route
+            ) {
+                AlarmScreen(viewModel, onClickAlarm = {navController.navigateSingleTopTo(Alarm.route)})
             }
         }
     }

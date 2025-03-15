@@ -29,3 +29,7 @@ object ViewMood : VibeDestination {
         navArgument("roomId") { type = NavType.IntType }
     )
 }
+
+object Alarm : VibeDestination {
+    override val route = "alarm"
+}
