@@ -1,9 +1,12 @@
-package com.CheekyLittleApps.vibecheck.ui.overview
+package com.CheekyLittleApps.vibecheck.ui.screens.overview
 
 import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -28,8 +31,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
-import com.CheekyLittleApps.vibecheck.ui.Cards.MoodCard
+import com.CheekyLittleApps.vibecheck.ui.cards.MoodCard
 import com.CheekyLittleApps.vibecheck.ui.DateRangePickerModal
 import com.CheekyLittleApps.vibecheck.viewmodel.MainViewModel
 import java.text.SimpleDateFormat
@@ -38,18 +40,15 @@ import java.util.Date
 import kotlin.time.Duration.Companion.days
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.IconButton
-import com.CheekyLittleApps.vibecheck.data.AlarmItem
+import androidx.compose.ui.unit.dp
 import com.CheekyLittleApps.vibecheck.ui.TimePickerModal
 import com.CheekyLittleApps.vibecheck.ui.alerts.SimpleAlertDialog
-import com.CheekyLittleApps.vibecheck.utils.AlarmScheduler
-import com.CheekyLittleApps.vibecheck.utils.AlarmSchedulerHelper
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -93,11 +92,11 @@ fun OverviewScreen(
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
                 title = {
-                    Text(
-                        modifier = Modifier.fillMaxWidth(),
-                        textAlign = TextAlign.Center,
-                        text = "Vibe Check",
-                    )
+//                    Text(
+//                        modifier = Modifier.fillMaxWidth(),
+//                        textAlign = TextAlign.Center,
+//                        text = "Vibe Check",
+//                    )
                 },
                 navigationIcon = {
                     IconButton(onClick = { expanded = !expanded }) {
@@ -137,13 +136,13 @@ fun OverviewScreen(
                 },
                 actions = {
 
-                    IconButton(onClick = {
-                        //onClickSendNotification()
-                        //isTimePickerClicked = true
-                        onClickAlarm()
-                    }){
-                        Icon(Icons.Default.Notifications, contentDescription = "Send notification button")
-                    }
+//                    IconButton(onClick = {
+//                        onClickSendNotification()
+//                        isTimePickerClicked = true
+//                        onClickAlarm()
+//                    }){
+//                        Icon(Icons.Default.Notifications, contentDescription = "Send notification button")
+//                    }
 
                     IconButton(onClick = {
                         isClicked = true
@@ -158,11 +157,11 @@ fun OverviewScreen(
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                 contentColor = MaterialTheme.colorScheme.primary,
             ) {
-                Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center,
-                    text = "Bottom app bar",
-                )
+//                Text(
+//                    modifier = Modifier.fillMaxWidth(),
+//                    textAlign = TextAlign.Center,
+//                    text = "Bottom app bar",
+//                )
             }
         },
         floatingActionButton = {
@@ -212,6 +211,9 @@ fun OverviewScreen(
 
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
+                modifier = Modifier.fillMaxSize(),
+                //contentPadding = PaddingValues(12.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
             ){
                 items(moodEntries.value) { entry ->
                     if(startDate != null && endDate != null)

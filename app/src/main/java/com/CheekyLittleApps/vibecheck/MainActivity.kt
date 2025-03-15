@@ -10,11 +10,9 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
@@ -34,16 +32,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.room.Room
-import com.CheekyLittleApps.vibecheck.data.AlarmItem
 import com.CheekyLittleApps.vibecheck.data.MoodDatabase
 import com.CheekyLittleApps.vibecheck.model.MoodEntry
-import com.CheekyLittleApps.vibecheck.ui.alarm.AlarmScreen
-import com.CheekyLittleApps.vibecheck.ui.moodentry.MoodEntryScreen
-import com.CheekyLittleApps.vibecheck.ui.overview.OverviewScreen
-import com.CheekyLittleApps.vibecheck.ui.viewmood.ViewMoodScreen
-import com.CheekyLittleApps.vibecheck.utils.AlarmScheduler
-import com.CheekyLittleApps.vibecheck.utils.AlarmSchedulerHelper
-import com.CheekyLittleApps.vibecheck.utils.NotificationHelper
+import com.CheekyLittleApps.vibecheck.ui.screens.alarm.AlarmScreen
+import com.CheekyLittleApps.vibecheck.ui.screens.moodentry.MoodEntryScreen
+import com.CheekyLittleApps.vibecheck.ui.screens.overview.OverviewScreen
+import com.CheekyLittleApps.vibecheck.ui.screens.viewmood.ViewMoodScreen
 import com.CheekyLittleApps.vibecheck.viewmodel.MainViewModel
 
 import kotlinx.coroutines.Dispatchers
@@ -186,14 +180,17 @@ fun VibeApp(viewModel: MainViewModel, context: Context) {
                     navBackStackEntry.arguments?.getInt("roomId") ?: 0
 
                 ViewMoodScreen(viewModel, roomId,
-                    onClickEntryAdded = { navController.navigateSingleTopTo(Overview.route)}
+                    onClickEntryAdded = { navController.navigateSingleTopTo(Overview.route) }
                 )
             }
 
             composable(
                 route = Alarm.route
             ) {
-                AlarmScreen(viewModel, onClickAlarm = {navController.navigateSingleTopTo(Alarm.route)})
+                AlarmScreen(viewModel,
+                    onClickAlarm = { navController.navigateSingleTopTo(Alarm.route) },
+                    onClickEntryAdded = { navController.navigateSingleTopTo(Overview.route) }
+                )
             }
         }
     }
