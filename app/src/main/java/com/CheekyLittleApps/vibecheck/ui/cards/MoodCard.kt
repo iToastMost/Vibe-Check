@@ -45,17 +45,13 @@ fun MoodCard(
                 //Text(text = date, modifier = Modifier.padding(4.dp), textAlign = TextAlign.Center)
                 Text(text = mood, modifier = Modifier.padding(4.dp), textAlign = TextAlign.Center)
 
-                //for checking databse id on card
+                //for checking database id on card
                 //Text(text = uId.toString(),  modifier = Modifier.padding(4.dp), textAlign = TextAlign.Center)
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = androidx.compose.ui.Alignment.Center) { Text(text = moodText, modifier = Modifier.padding(4.dp), textAlign = TextAlign.Center) }
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text(text = moodText, modifier = Modifier.padding(4.dp), textAlign = TextAlign.Center) }
             }
         }
         Text(text = date, textAlign = TextAlign.Center)
     }
-
-
-
-
 }
 
 fun Modifier.fadingEdge(brush: Brush) = this
