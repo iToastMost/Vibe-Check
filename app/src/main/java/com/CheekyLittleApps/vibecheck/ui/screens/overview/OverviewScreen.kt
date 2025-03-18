@@ -40,6 +40,7 @@ import java.util.Date
 import kotlin.time.Duration.Companion.days
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Share
@@ -142,6 +143,10 @@ fun OverviewScreen(
 //                        onClickAlarm()
 //                    }){
 //                        Icon(Icons.Default.Notifications, contentDescription = "Send notification button")
+//                    }
+
+//                    IconButton(onClick = { }) {
+//                        Icon(Icons.Default.Star, contentDescription = "Filter Options")
 //                    }
 
                     IconButton(onClick = {

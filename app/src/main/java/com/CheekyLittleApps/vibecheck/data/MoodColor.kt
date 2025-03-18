@@ -8,6 +8,7 @@ enum class MoodColor(val color: Int) {
     HAPPY(0x0000FF),
     SAD(0xFF0000),
     SURPRISED(0xFF0000),
+
 //    FRUSTRATED(0X000000),
 //    STRESSED(0X000000),
 //    ANXIOUS(0X000000),
