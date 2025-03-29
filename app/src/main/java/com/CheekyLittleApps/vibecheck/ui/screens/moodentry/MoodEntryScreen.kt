@@ -48,7 +48,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
-import com.CheekyLittleApps.vibecheck.data.MoodColor
+import androidx.compose.ui.unit.sp
+import com.CheekyLittleApps.vibecheck.data.MoodEmoji
+import com.CheekyLittleApps.vibecheck.data.unicodeToString
 import com.CheekyLittleApps.vibecheck.model.MoodEntry
 import com.CheekyLittleApps.vibecheck.ui.SingleChoiceSegmentedButton
 import com.CheekyLittleApps.vibecheck.viewmodel.MainViewModel
@@ -68,9 +70,11 @@ fun MoodEntryScreen(
     //var expanded by remember { mutableStateOf(false) }
     var moodsPicked by remember { mutableStateOf("") }
     var moodList by remember { mutableStateOf(setOf<String>()) }
+    val emojiSelectionSize = 1
+    val emojiFontSize = 30.sp
 
     val formatter = SimpleDateFormat("EEE, MMM d, yyyy KK:mm:aaa")
-    val moods = enumValues<MoodColor>()
+    val moods = enumValues<MoodEmoji>()
 
 
     Scaffold(
@@ -98,6 +102,7 @@ fun MoodEntryScreen(
                             val currentDate = formatter.format(date)
                             val currentTime = System.currentTimeMillis()
                             var moodEntry = MoodEntry(date = currentDate, time = currentTime, mood = text, currentMood = moodList.joinToString(", "))
+                            //var moodEntry = MoodEntry(date = currentDate, time = currentTime, mood = text, currentMood = moodList.joinToString(", "))
                             viewModel.addMoodEntry(moodEntry)
                             text = ""
                             onClickEntryAdded()
@@ -116,22 +121,22 @@ fun MoodEntryScreen(
                 horizontalArrangement = Arrangement.Start
             ) {
                 moods.forEach { option ->
-                    val selected = moodList.contains(option.toString())
+                    val selected = moodList.contains(option.emoji)
                     //May be used for selecting general mood categories
                     FilterChip(
                         onClick = {
-                            if(moodList.size < 3){
+                            if(moodList.size < emojiSelectionSize){
                                 moodList = if (selected) {
-                                    moodList - option.toString()
+                                    moodList - option.emoji
                                 }
                                 else{
-                                    moodList + option.toString()
+                                    moodList + option.emoji
                                 }
                             } else {
-                                moodList = moodList - option.toString()
+                                moodList = moodList - option.emoji
                             }
                         },
-                        label = { Text(option.toString()) },
+                        label = { Text(option.emoji, fontSize = emojiFontSize) },
                         selected = selected,
                         leadingIcon = if (selected) {
                             {

@@ -37,7 +37,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.CheekyLittleApps.vibecheck.data.MoodColor
+import androidx.compose.ui.unit.sp
+import com.CheekyLittleApps.vibecheck.data.MoodEmoji
 import com.CheekyLittleApps.vibecheck.model.MoodEntry
 import com.CheekyLittleApps.vibecheck.ui.alerts.SimpleAlertDialog
 import com.CheekyLittleApps.vibecheck.viewmodel.MainViewModel
@@ -59,9 +60,11 @@ fun ViewMoodScreen(
     var moodList by remember { mutableStateOf(setOf<String>()) }
     var text by remember { mutableStateOf("") }
     var isDeleteClicked by remember { mutableStateOf(false) }
+    val emojiSelectionSize = 1
+    val emojiFontSize = 30.sp
 
     val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm")
-    val moods = enumValues<MoodColor>()
+    val moods = enumValues<MoodEmoji>()
 
     Scaffold(
         topBar = {
@@ -131,23 +134,23 @@ fun ViewMoodScreen(
                 horizontalArrangement = Arrangement.Start
             ) {
                 moods.forEach { option ->
-                    val selected = moodList.contains(option.toString())
+                    val selected = moodList.contains(option.emoji)
 
                     //May be used for selecting general mood categories
                     FilterChip(
                         onClick = {
-                            if(moodList.size < 3) {
+                            if(moodList.size < emojiSelectionSize) {
                                 moodList = if (selected){
-                                    moodList - option.toString()
+                                    moodList - option.emoji
                                 } else{
-                                    moodList + option.toString()
+                                    moodList + option.emoji
                                 }
                             } else{
-                                moodList = moodList - option.toString()
+                                moodList = moodList - option.emoji
                             }
 
                         },
-                        label = { Text(option.toString()) },
+                        label = { Text(option.emoji, fontSize = emojiFontSize) },
                         selected = selected,
                         leadingIcon = if (selected) {
                             {
